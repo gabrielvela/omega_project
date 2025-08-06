@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/clientes")
@@ -49,7 +48,7 @@ public class ClienteController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<Cliente> actualizarParcialmente(@PathVariable Long id, @RequestBody Map<String, Object> campos) {
-        Cliente clienteActualizado = clienteService.patchCliente(id, campos);
+        Cliente clienteActualizado = clienteService.actualizarParcialmente(id, campos);
         return clienteActualizado != null ? ResponseEntity.ok(clienteActualizado) : ResponseEntity.notFound().build();
     }
 }

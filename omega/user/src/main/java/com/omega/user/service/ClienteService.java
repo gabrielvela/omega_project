@@ -49,7 +49,7 @@ public class ClienteService {
         clienteRepository.deleteById(id);
     }
 
-    public Cliente patchCliente(Long id, Map<String, Object> camposActualizados) {
+    public Cliente actualizarParcialmente(Long id, Map<String, Object> camposActualizados) {
         return clienteRepository.findById(id).map(cliente -> {
             camposActualizados.forEach((key, value) -> {
                 Field campo = ReflectionUtils.findField(Cliente.class, key);
