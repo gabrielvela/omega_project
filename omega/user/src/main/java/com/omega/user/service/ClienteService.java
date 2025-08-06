@@ -27,7 +27,12 @@ public class ClienteService {
         return clienteRepository.findById(id).orElse(null);
     }
 
-    public Cliente guardar(Cliente cliente) {
+    public Cliente crear(Cliente cliente) {
+        // Validación personalizada
+        if (clienteRepository.existsByIdentificacion(cliente.getIdentificacion())) {
+            throw new IllegalArgumentException("Ya existe un cliente con esa identificación.");
+        }
+
         return clienteRepository.save(cliente);
     }
 

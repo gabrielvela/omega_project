@@ -2,11 +2,16 @@ package com.omega.user.controller;
 
 import com.omega.user.model.Cliente;
 import com.omega.user.service.ClienteService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+
+import org.springframework.validation.ObjectError;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/clientes")
@@ -29,10 +34,30 @@ public class ClienteController {
         return cliente != null ? ResponseEntity.ok(cliente) : ResponseEntity.notFound().build();
     }
 
+//    @PostMapping
+//    public ResponseEntity<Cliente> crear(@RequestBody Cliente cliente) {
+//        return ResponseEntity.ok(clienteService.guardar(cliente));
+//    }
+
+
     @PostMapping
-    public ResponseEntity<Cliente> crear(@RequestBody Cliente cliente) {
-        return ResponseEntity.ok(clienteService.guardar(cliente));
+    public ResponseEntity<?> crear(@Valid @RequestBody Cliente cliente, BindingResult result) {
+        if (result.hasErrors()) {
+            String errores = result.getAllErrors()
+                    .stream()
+                    .map(ObjectError::getDefaultMessage)
+                    .collect(Collectors.joining(", "));
+            return ResponseEntity.badRequest().body("Errores de validación: " + errores);
+        }
+
+        try {
+            Cliente nuevo = clienteService.crear(cliente);
+            return ResponseEntity.ok(nuevo);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body("Error al crear cliente: " + ex.getMessage());
+        }
     }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<Cliente> actualizar(@PathVariable Long id, @RequestBody Cliente clienteActualizado) {
