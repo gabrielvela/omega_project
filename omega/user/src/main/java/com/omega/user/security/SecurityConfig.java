@@ -10,12 +10,20 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+//        http
+//                .csrf().disable()
+//                .authorizeHttpRequests()
+//                .anyRequest().permitAll() // permite todos los endpoints
+//                .and()
+//                .httpBasic().disable(); // desactiva autenticación básica
         http
-                .csrf().disable()
-                .authorizeHttpRequests()
-                .anyRequest().permitAll() // permite todos los endpoints
-                .and()
-                .httpBasic().disable(); // desactiva autenticación básica
+                .csrf(csrf -> csrf.disable())
+                .httpBasic(httpBasic -> httpBasic.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/clientes/**").permitAll()
+                        .anyRequest().permitAll()
+                );
+
 
         return http.build();
     }
