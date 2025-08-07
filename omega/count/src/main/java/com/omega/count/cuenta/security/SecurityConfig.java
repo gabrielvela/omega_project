@@ -14,7 +14,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/cuentas/**").permitAll()
+                        .requestMatchers("/cuentas/**","/movimientos/**").permitAll()
                         .anyRequest().permitAll()
                 );
 
