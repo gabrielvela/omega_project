@@ -33,6 +33,7 @@ public class CuentaService {
 
     @Transactional
     public Cuenta crear(Cuenta cuenta) {
+        cuenta.setSaldoDisponible(cuenta.getSaldoInicial());
         if (existePorNumeroCuenta(cuenta.getNumeroCuenta())) {
             throw new IllegalArgumentException("Ya existe una cuenta con ese número.");
         }
