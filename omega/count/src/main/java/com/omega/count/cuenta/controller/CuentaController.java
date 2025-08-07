@@ -1,9 +1,12 @@
 package com.omega.count.cuenta.controller;
 
+import com.omega.count.cuenta.dto.CuentaDTO;
 import com.omega.count.cuenta.model.Cuenta;
 import com.omega.count.cuenta.service.CuentaService;
+import com.omega.count.integration.exception.ClienteNoEncontradoException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,15 +39,16 @@ public class CuentaController {
 //    }
 
     @PostMapping
-    public ResponseEntity<?> crear(@Valid @RequestBody Cuenta cuenta) {
+    public ResponseEntity<?> crear(@Valid @RequestBody CuentaDTO cuentaDTO) {
         try {
-            Cuenta nueva = cuentaService.crear(cuenta);
-            return ResponseEntity.ok(nueva);
+            Cuenta nueva = cuentaService.crear(cuentaDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
+        } catch (ClienteNoEncontradoException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente no existe: " + ex.getMessage());
         } catch (IllegalArgumentException ex) {
-            return ResponseEntity
-                    .badRequest()
-                    .body("Error al crear cuenta: " + ex.getMessage());
+            return ResponseEntity.badRequest().body("Error al crear cuenta: " + ex.getMessage());
         }
+
     }
 
     @PutMapping("/{id}")

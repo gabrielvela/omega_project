@@ -1,11 +1,15 @@
 package com.omega.count.cuenta.service;
 
+import com.omega.count.cuenta.dto.CuentaDTO;
 import com.omega.count.cuenta.model.Cuenta;
 import com.omega.count.cuenta.repository.CuentaRepository;
+import com.omega.count.integration.validator.ClienteValidatorService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.lang.reflect.Field;
 
@@ -16,8 +20,16 @@ import java.util.Optional;
 @Service
 public class CuentaService {
 
-    @Autowired
+    //@Autowired
     private CuentaRepository cuentaRepository;
+
+    private final ClienteValidatorService clienteValidatorService;
+
+    public CuentaService(CuentaRepository cuentaRepository, ClienteValidatorService clienteValidatorService) {
+        this.cuentaRepository = cuentaRepository;
+        this.clienteValidatorService = clienteValidatorService;
+    }
+
 
     public List<Cuenta> listarTodos() {
         return cuentaRepository.findAll();
@@ -31,14 +43,28 @@ public class CuentaService {
         return cuentaRepository.existsByNumeroCuenta(numeroCuenta);
     }
 
+//    @Transactional
+//    public Cuenta crear(Cuenta cuenta) {
+//        cuenta.setSaldoDisponible(cuenta.getSaldoInicial());
+//        if (existePorNumeroCuenta(cuenta.getNumeroCuenta())) {
+//            throw new IllegalArgumentException("Ya existe una cuenta con ese número.");
+//        }
+//        return cuentaRepository.save(cuenta);
+//    }
+
     @Transactional
-    public Cuenta crear(Cuenta cuenta) {
-        cuenta.setSaldoDisponible(cuenta.getSaldoInicial());
+    public Cuenta crear(CuentaDTO cuentaDTO) {
+        clienteValidatorService.validarExistenciaCliente(cuentaDTO.getClienteId());
+
+        Cuenta cuenta = Cuenta.convertirDTOACuenta(cuentaDTO);
+
         if (existePorNumeroCuenta(cuenta.getNumeroCuenta())) {
             throw new IllegalArgumentException("Ya existe una cuenta con ese número.");
         }
+
         return cuentaRepository.save(cuenta);
     }
+
 
     @Transactional
     public Cuenta actualizar(Long id, Cuenta cuentaActualizada) {
@@ -52,7 +78,12 @@ public class CuentaService {
 
     @Transactional
     public void eliminar(Long id) {
-        cuentaRepository.deleteById(id);
+        Optional<Cuenta> cuentaOpt = cuentaRepository.findById(id);
+        if (cuentaOpt.isPresent()) {
+            cuentaRepository.delete(cuentaOpt.get());
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "La cuenta con ID " + id + " no existe");
+        }
     }
 
     @Transactional

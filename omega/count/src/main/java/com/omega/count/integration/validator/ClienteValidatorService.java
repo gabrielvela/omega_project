@@ -7,10 +7,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
-import reactor.core.publisher.Mono;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
 public class ClienteValidatorService {
@@ -18,16 +17,20 @@ public class ClienteValidatorService {
     private final RestTemplate restTemplate;
 
     @Value("${servicio.usuario.url}")
-    private String usuarioServiceUrl;
+    private String urlClientService;
 
+    @Autowired
     public ClienteValidatorService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
     public void validarExistenciaCliente(Long clienteId) {
+        String endpoint = urlClientService + "/" + clienteId;
+        System.out.println("🔍 Validando existencia de cliente en: " + endpoint);
+
         try {
             ResponseEntity<Void> response = restTemplate.exchange(
-                    usuarioServiceUrl + "/" + clienteId,
+                    endpoint,
                     HttpMethod.GET,
                     null,
                     Void.class
@@ -39,8 +42,8 @@ public class ClienteValidatorService {
 
         } catch (HttpClientErrorException.NotFound e) {
             throw new ClienteNoEncontradoException(clienteId);
-        } catch (Exception e) {
-            throw new RuntimeException("Error al validar cliente: " + e.getMessage());
+        } catch (RestClientException e) {
+            throw new RuntimeException("❌ Error al conectar con el servicio de clientes: " + e.getMessage());
         }
     }
 }

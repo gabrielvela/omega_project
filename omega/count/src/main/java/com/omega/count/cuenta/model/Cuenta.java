@@ -48,7 +48,7 @@ public class Cuenta {
     private Long clienteId;
 
 
-    public CuentaDTO convertirDTOACuenta(Cuenta cuenta) {
+    public static CuentaDTO convertirCuentaADTO(Cuenta cuenta) {
         CuentaDTO dto = new CuentaDTO();
         dto.setId(cuenta.getId());
         dto.setNumeroCuenta(cuenta.getNumeroCuenta());
@@ -59,6 +59,19 @@ public class Cuenta {
         dto.setClienteId(cuenta.getClienteId());
         return dto;
     }
+
+    public static Cuenta convertirDTOACuenta(CuentaDTO dto) {
+        Cuenta cuenta = new Cuenta();
+        cuenta.setId(dto.getId());
+        cuenta.setClienteId(dto.getClienteId());
+        cuenta.setNumeroCuenta(dto.getNumeroCuenta());
+        cuenta.setTipoCuenta(dto.getTipoCuenta());
+        cuenta.setSaldoInicial(dto.getSaldoInicial());
+        cuenta.setSaldoDisponible(dto.getSaldoInicial());
+        cuenta.setEstado(dto.getEstado()); // ← este es el que faltaba
+        return cuenta;
+    }
+
 
     public Long getId() {
         return id;
