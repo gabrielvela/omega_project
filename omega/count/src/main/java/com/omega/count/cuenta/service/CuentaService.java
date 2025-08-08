@@ -57,6 +57,8 @@ public class CuentaService {
         clienteValidatorService.validarExistenciaCliente(cuentaDTO.getClienteId());
 
         Cuenta cuenta = Cuenta.convertirDTOACuenta(cuentaDTO);
+        cuenta.setSaldoDisponible(cuenta.getSaldoInicial());
+        cuenta.setEstado(true);
 
         if (existePorNumeroCuenta(cuenta.getNumeroCuenta())) {
             throw new IllegalArgumentException("Ya existe una cuenta con ese número.");
@@ -73,6 +75,7 @@ public class CuentaService {
         cuenta.setTipoCuenta(cuentaActualizada.getTipoCuenta());
         cuenta.setSaldoInicial(cuentaActualizada.getSaldoInicial());
         cuenta.setEstado(cuentaActualizada.getEstado());
+        cuenta.setSaldoDisponible(cuentaActualizada.getSaldoDisponible());
         return cuentaRepository.save(cuenta);
     }
 
