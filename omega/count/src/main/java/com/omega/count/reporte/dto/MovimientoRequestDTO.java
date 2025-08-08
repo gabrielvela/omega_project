@@ -1,25 +1,16 @@
-package com.omega.count.movimiento.dto;
+package com.omega.count.reporte.dto;
 
 import com.omega.count.movimiento.model.TipoMovimiento;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.Date;
 
-public class MovimientoDTO {
-    private Long cuentaId;
+public class MovimientoRequestDTO {
     private TipoMovimiento tipo;
     private BigDecimal valor;
     private Date fecha;
 
     // Getters y setters
-    public Long getCuentaId() {
-        return cuentaId;
-    }
-
-    public void setCuentaId(Long cuentaId) {
-        this.cuentaId = cuentaId;
-    }
 
     public TipoMovimiento getTipo() {
         return tipo;

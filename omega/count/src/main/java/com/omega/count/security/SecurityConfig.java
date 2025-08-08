@@ -1,4 +1,4 @@
-package com.omega.count.cuenta.security;
+package com.omega.count.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +14,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/cuentas/**","/movimientos/**").permitAll()
+                        .requestMatchers("/cuentas/**","/movimientos/**","/reportes/**").permitAll()
                         .anyRequest().permitAll()
                 );
 

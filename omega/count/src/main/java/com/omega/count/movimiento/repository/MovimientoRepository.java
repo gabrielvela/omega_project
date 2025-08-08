@@ -15,4 +15,7 @@ public interface MovimientoRepository extends JpaRepository<Movimiento, Long> {
 
     boolean existsByFechaAndTipoMovimientoAndValorAndCuenta(Date fecha, TipoMovimiento tipo, BigDecimal valor, Cuenta cuenta);
 
+    //    List<Movimiento> findByCuentaIdAndFechaBetween(Long cuentaId, LocalDate inicio, LocalDate fin);
+    List<Movimiento> findByCuentaIdAndFechaBetween(Long cuentaId, Date fechaInicio, Date fechaFin);
+
 }
