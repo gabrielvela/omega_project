@@ -46,7 +46,7 @@ class CuentaServiceTest {
         cuenta.setTipoCuenta("CORRIENTE");
         cuenta.setSaldoInicial(BigDecimal.valueOf(5000));
         cuenta.setClienteId(clienteId);
-        cuenta.setEstado("ACTIVA");
+        cuenta.setEstado(true);
 
         Cuenta cuentaGuardada = cuentaService.crear(Cuenta.convertirCuentaADTO(cuenta));
 
@@ -66,7 +66,7 @@ class CuentaServiceTest {
         cuenta.setTipoCuenta("AHORROS");
         cuenta.setSaldoInicial(BigDecimal.valueOf(3000));
         cuenta.setClienteId(clienteId);
-        cuenta.setEstado("ACTIVA");
+        cuenta.setEstado(true);
 
         assertThrows(ClienteNoEncontradoException.class, () -> {
             cuentaService.crear(Cuenta.convertirCuentaADTO(cuenta));
