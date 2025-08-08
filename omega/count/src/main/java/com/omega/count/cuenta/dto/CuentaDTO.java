@@ -8,7 +8,7 @@ public class CuentaDTO {
     private String tipoCuenta;
     private BigDecimal saldoInicial;
     private BigDecimal saldoDisponible;
-    private String estado;
+    private Boolean estado;
     private Long clienteId; // Este viene del otro proyecto user
 
     // Getters y Setters
@@ -27,8 +27,13 @@ public class CuentaDTO {
     public BigDecimal getSaldoDisponible() { return saldoDisponible; }
     public void setSaldoDisponible(BigDecimal saldoDisponible) { this.saldoDisponible = saldoDisponible; }
 
-    public String getEstado() { return estado; }
-    public void setEstado(String estado) { this.estado = estado; }
+    public Boolean getEstado() {
+        return estado;
+    }
+
+    public void setEstado(Boolean estado) {
+        this.estado = estado;
+    }
 
     public Long getClienteId() {
         return clienteId;

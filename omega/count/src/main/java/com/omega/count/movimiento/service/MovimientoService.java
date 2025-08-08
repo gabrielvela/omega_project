@@ -32,7 +32,12 @@ public class MovimientoService {
         cuenta = cuentaRepository.findById(cuentaId)
                 .orElseThrow(() -> new CuentaInexistenteException("Cuenta no encontrada"));
 
-        // Validación de duplicado
+        //Validación del estado de la cuenta para realizar transacciones
+        if (!cuenta.estaActiva()) {
+            throw new IllegalStateException("La cuenta no está activa para realizar operaciones.");
+        }
+
+        // Validación de movimiento duplicado
         if (movimientoRepository.existsByFechaAndTipoMovimientoAndValorAndCuenta(
                 new Date(), tipo, valor, cuenta)) {
             throw new IllegalArgumentException("Movimiento duplicado");

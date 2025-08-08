@@ -24,7 +24,7 @@ public class Cuenta {
     @Column(name = "numeroCuenta", nullable = false, unique = true)
     private String numeroCuenta;
 
-    @NotBlank
+    @NotNull
     @Size(max = 20)
     @Column(name = "tipoCuenta", nullable = false)
     private String tipoCuenta; // Ej: AHORROS, CORRIENTE
@@ -41,12 +41,20 @@ public class Cuenta {
 
     @NotBlank
     @Column(name = "estado", nullable = false)
-    private String estado; // Ej: ACTIVA, INACTIVA, BLOQUEADA
+    private Boolean estado; // Ej: ACTIVA, INACTIVA, BLOQUEADA
 
     @NotNull
     @Column(name = "clienteId", nullable = false)
     private Long clienteId;
 
+    //Métodos de la entidad
+    public boolean estaActiva() {
+        return Boolean.TRUE.equals(this.estado);
+    }
+
+    public boolean estaInactiva() {
+        return Boolean.FALSE.equals(this.estado);
+    }
 
     public static CuentaDTO convertirCuentaADTO(Cuenta cuenta) {
         CuentaDTO dto = new CuentaDTO();
@@ -68,10 +76,11 @@ public class Cuenta {
         cuenta.setTipoCuenta(dto.getTipoCuenta());
         cuenta.setSaldoInicial(dto.getSaldoInicial());
         cuenta.setSaldoDisponible(dto.getSaldoInicial());
-        cuenta.setEstado(dto.getEstado()); // ← este es el que faltaba
+        cuenta.setEstado(dto.getEstado());
         return cuenta;
     }
 
+    //Getters y Setters
 
     public Long getId() {
         return id;
@@ -105,11 +114,11 @@ public class Cuenta {
         this.saldoInicial = saldoInicial;
     }
 
-    public @NotBlank String getEstado() {
+    public @NotNull Boolean getEstado() {
         return estado;
     }
 
-    public void setEstado(@NotBlank String estado) {
+    public void setEstado(@NotNull Boolean estado) {
         this.estado = estado;
     }
 
