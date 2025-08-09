@@ -1,13 +1,18 @@
 package com.omega.user.controller;
 
+import com.omega.user.dto.ClienteDTO;
 import com.omega.user.model.Cliente;
+import com.omega.user.repository.ClienteRepository;
 import com.omega.user.service.ClienteService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
@@ -28,13 +33,7 @@ public class ClienteController {
         return clienteService.listarTodos();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Cliente> obtenerPorId(@PathVariable Long id) {
-        Cliente cliente = clienteService.buscarPorId(id);
-        return cliente != null ? ResponseEntity.ok(cliente) : ResponseEntity.notFound().build();
-    }
-
-//    @PostMapping
+    //    @PostMapping
 //    public ResponseEntity<Cliente> crear(@RequestBody Cliente cliente) {
 //        return ResponseEntity.ok(clienteService.guardar(cliente));
 //    }
@@ -58,6 +57,13 @@ public class ClienteController {
         }
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Cliente> obtenerPorId(@PathVariable Long id) {
+        Cliente cliente = clienteService.buscarPorId(id);
+        return cliente != null ? ResponseEntity.ok(cliente) : ResponseEntity.notFound().build();
+    }
+
+
 
     @PutMapping("/{id}")
     public ResponseEntity<Cliente> actualizar(@PathVariable Long id, @RequestBody Cliente clienteActualizado) {
@@ -75,5 +81,15 @@ public class ClienteController {
     public ResponseEntity<Cliente> actualizarParcialmente(@PathVariable Long id, @RequestBody Map<String, Object> campos) {
         Cliente clienteActualizado = clienteService.actualizarParcialmente(id, campos);
         return clienteActualizado != null ? ResponseEntity.ok(clienteActualizado) : ResponseEntity.notFound().build();
+    }
+
+    @Autowired
+    ClienteRepository clienteRepository;
+
+    @GetMapping("/buscar")
+    public ResponseEntity<ClienteDTO> buscarPorNombre(@RequestParam String nombre) {
+        Cliente cliente = clienteRepository.findByNombre(nombre)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente no encontrado"));
+        return ResponseEntity.ok(new ClienteDTO(cliente));
     }
 }

@@ -1,9 +1,11 @@
 package com.omega.count.integration.validator;
 
 
+import com.omega.count.integration.dto.ClienteDTO;
 import com.omega.count.integration.exception.ClienteNoEncontradoException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -18,6 +20,10 @@ public class ClienteValidatorService {
 
     @Value("${servicio.usuario.url}")
     private String urlClientService;
+
+
+    @Value("${servicio.usuario.url.buscar.nombre}")
+    private String pathBuscarClienteNombre;
 
     @Autowired
     public ClienteValidatorService(RestTemplate restTemplate) {
@@ -46,4 +52,18 @@ public class ClienteValidatorService {
             throw new RuntimeException("❌ Error al conectar con el servicio de clientes: " + e.getMessage());
         }
     }
+
+
+    public Long obtenerClienteIdPorNombre(String nombre) {
+        String url = pathBuscarClienteNombre + nombre;
+        ResponseEntity<ClienteDTO> response = restTemplate.getForEntity(url, ClienteDTO.class);
+
+        if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+            return response.getBody().getClienteId();
+        } else {
+            throw new RuntimeException("No se pudo obtener el cliente por nombre: " + nombre);
+        }
+    }
+
+
 }

@@ -39,7 +39,7 @@ public class Cuenta {
     @Column(name = "saldoDisponible", precision = 12, scale = 2, nullable = false)
     private BigDecimal saldoDisponible;
 
-    @NotBlank
+    @NotNull
     @Column(name = "estado", nullable = false)
     private Boolean estado; // Ej: ACTIVA, INACTIVA, BLOQUEADA
 
