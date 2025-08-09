@@ -1,6 +1,7 @@
 package com.omega.count.cuenta.service;
 
 import com.omega.count.cuenta.dto.CuentaDTO;
+import com.omega.count.cuenta.dto.CuentaRequestDTO;
 import com.omega.count.cuenta.model.Cuenta;
 import com.omega.count.cuenta.repository.CuentaRepository;
 import com.omega.count.integration.validator.ClienteValidatorService;
@@ -59,6 +60,26 @@ public class CuentaService {
         Cuenta cuenta = Cuenta.convertirDTOACuenta(cuentaDTO);
         cuenta.setSaldoDisponible(cuenta.getSaldoInicial());
         cuenta.setEstado(true);
+
+        if (existePorNumeroCuenta(cuenta.getNumeroCuenta())) {
+            throw new IllegalArgumentException("Ya existe una cuenta con ese número.");
+        }
+
+        return cuentaRepository.save(cuenta);
+    }
+
+    @Transactional
+    public Cuenta crearPorNombreCliente(CuentaRequestDTO dto) {
+        Long clienteId = clienteValidatorService.obtenerClienteIdPorNombre(dto.getNombreCliente());
+
+        Cuenta cuenta = new Cuenta();
+        cuenta.setNumeroCuenta(dto.getNumeroCuenta());
+        cuenta.setTipoCuenta(dto.getTipoCuenta());
+        cuenta.setSaldoInicial(dto.getSaldoInicial());
+        cuenta.setSaldoDisponible(dto.getSaldoInicial());
+        //cuenta.setEstado(dto.getEstado());
+        cuenta.setEstado(true);
+        cuenta.setClienteId(clienteId);
 
         if (existePorNumeroCuenta(cuenta.getNumeroCuenta())) {
             throw new IllegalArgumentException("Ya existe una cuenta con ese número.");

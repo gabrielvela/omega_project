@@ -1,9 +1,11 @@
 package com.omega.count.cuenta.controller;
 
 import com.omega.count.cuenta.dto.CuentaDTO;
+import com.omega.count.cuenta.dto.CuentaRequestDTO;
 import com.omega.count.cuenta.model.Cuenta;
 import com.omega.count.cuenta.service.CuentaService;
 import com.omega.count.integration.exception.ClienteNoEncontradoException;
+import com.omega.count.integration.validator.ClienteValidatorService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,22 +35,30 @@ public class CuentaController {
     }
 
 //    @PostMapping
-//    public ResponseEntity<Cuenta> crear(@RequestBody Cuenta cuenta) {
-//        Cuenta nueva = cuentaService.crear(cuenta);
-//        return ResponseEntity.ok(nueva);
+//    public ResponseEntity<?> crear(@Valid @RequestBody CuentaDTO cuentaDTO) {
+//        try {
+//            Cuenta nueva = cuentaService.crear(cuentaDTO);
+//            return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
+//        } catch (ClienteNoEncontradoException ex) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente no existe: " + ex.getMessage());
+//        } catch (IllegalArgumentException ex) {
+//            return ResponseEntity.badRequest().body("Error al crear cuenta: " + ex.getMessage());
+//        }
+//
 //    }
 
+
     @PostMapping
-    public ResponseEntity<?> crear(@Valid @RequestBody CuentaDTO cuentaDTO) {
+    public ResponseEntity<?> crearCuentaPorNombre(@Valid @RequestBody CuentaRequestDTO dto) {
+
         try {
-            Cuenta nueva = cuentaService.crear(cuentaDTO);
+            Cuenta nueva = cuentaService.crearPorNombreCliente(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
         } catch (ClienteNoEncontradoException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente no existe: " + ex.getMessage());
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.badRequest().body("Error al crear cuenta: " + ex.getMessage());
         }
-
     }
 
     @PutMapping("/{id}")
