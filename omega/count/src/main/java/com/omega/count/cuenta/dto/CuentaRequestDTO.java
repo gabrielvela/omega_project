@@ -1,10 +1,12 @@
 package com.omega.count.cuenta.dto;
 
+import com.omega.count.cuenta.model.TipoCuenta;
+
 import java.math.BigDecimal;
 
 public class CuentaRequestDTO {
     private String numeroCuenta;
-    private String tipoCuenta;
+    private TipoCuenta tipoCuenta;
     private BigDecimal saldoInicial;
     private Boolean estado;
     private String nombreCliente; //
@@ -17,11 +19,11 @@ public class CuentaRequestDTO {
         this.numeroCuenta = numeroCuenta;
     }
 
-    public String getTipoCuenta() {
+    public TipoCuenta getTipoCuenta() {
         return tipoCuenta;
     }
 
-    public void setTipoCuenta(String tipoCuenta) {
+    public void setTipoCuenta(TipoCuenta tipoCuenta) {
         this.tipoCuenta = tipoCuenta;
     }
 

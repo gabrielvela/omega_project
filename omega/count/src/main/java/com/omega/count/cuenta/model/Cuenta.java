@@ -17,17 +17,16 @@ public class Cuenta {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // Clave única (ID técnica en la DB)
+    private Long id;
 
     @NotBlank
     @Size(max = 20)
     @Column(name = "numeroCuenta", nullable = false, unique = true)
     private String numeroCuenta;
 
-    @NotNull
-    @Size(max = 20)
+    @Enumerated(EnumType.STRING)
     @Column(name = "tipoCuenta", nullable = false)
-    private String tipoCuenta; // Ej: AHORROS, CORRIENTE
+    private TipoCuenta tipoCuenta; // Ej: AHORROS, CORRIENTE
 
     @NotNull
     @DecimalMin(value = "0.0", inclusive = true)
@@ -98,11 +97,11 @@ public class Cuenta {
         this.numeroCuenta = numeroCuenta;
     }
 
-    public @NotBlank @Size(max = 20) String getTipoCuenta() {
+    public TipoCuenta getTipoCuenta() {
         return tipoCuenta;
     }
 
-    public void setTipoCuenta(@NotBlank @Size(max = 20) String tipoCuenta) {
+    public void setTipoCuenta(TipoCuenta tipoCuenta) {
         this.tipoCuenta = tipoCuenta;
     }
 
@@ -138,14 +137,4 @@ public class Cuenta {
         this.clienteId = clienteId;
     }
 
-    @Override
-    public String toString() {
-        return "Cuenta{" +
-                "id=" + id +
-                ", numeroCuenta='" + numeroCuenta + '\'' +
-                ", tipoCuenta='" + tipoCuenta + '\'' +
-                ", saldoInicial=" + saldoInicial +
-                ", estado='" + estado + '\'' +
-                '}';
-    }
 }
