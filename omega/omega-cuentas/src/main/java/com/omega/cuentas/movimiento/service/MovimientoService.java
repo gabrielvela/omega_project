@@ -27,6 +27,45 @@ public class MovimientoService {
         this.movimientoRepository = movimientoRepository;
     }
 
+    public List<Movimiento> listarMovimientos() {
+        return movimientoRepository.findAll();
+    }
+
+    //
+//    @Transactional
+//    public Movimiento registrarMovimientoConIdCuenta(Long cuentaId, TipoMovimiento tipo, BigDecimal valor) throws SaldoInsuficienteException, CuentaInexistenteException {
+//        Cuenta cuenta;
+//        cuenta = cuentaRepository.findById(cuentaId)
+//                .orElseThrow(() -> new CuentaInexistenteException("Cuenta no encontrada"));
+//
+//        //Validación del estado de la cuenta para realizar transacciones
+//        if (!cuenta.estaActiva()) {
+//            throw new IllegalStateException("La cuenta no está activa para realizar operaciones.");
+//        }
+//
+//        // Validación de movimiento duplicado
+//        if (movimientoRepository.existsByFechaAndTipoMovimientoAndValorAndCuenta(
+//                new Date(), tipo, valor, cuenta)) {
+//            throw new IllegalArgumentException("Movimiento duplicado");
+//        }
+//
+//        BigDecimal nuevoSaldo = tipo == TipoMovimiento.RETIRO
+//                ? cuenta.getSaldoDisponible().subtract(valor)
+//                : cuenta.getSaldoDisponible().add(valor);
+//
+//        //Solo el RETIRO puede causar saldo cero o menor
+//        if (tipo == TipoMovimiento.RETIRO && nuevoSaldo.compareTo(BigDecimal.ZERO) < 0) {
+//            throw new SaldoInsuficienteException("Saldo no disponible");
+//        }
+//
+//
+//        cuenta.setSaldoDisponible(nuevoSaldo);
+//        cuentaRepository.save(cuenta);
+//
+//        Movimiento movimiento = new Movimiento(null, new Date(), tipo, valor, nuevoSaldo, cuenta);
+//        
+//        return movimientoRepository.save(movimiento);
+//    }
     @Transactional
     public Movimiento registrarMovimientoConNumeroCuenta(String numeroCuenta, TipoMovimiento tipo, BigDecimal valor) throws SaldoInsuficienteException, CuentaInexistenteException {
         Cuenta cuenta;
@@ -71,7 +110,6 @@ public class MovimientoService {
 //            nuevoSaldo = cuenta.getSaldoDisponible().add(valor);
 //            valor = absValor;
 //        }
-
         Movimiento movimiento = new Movimiento(null, new Date(), tipo, valor, nuevoSaldo, cuenta);
 
         cuenta.setSaldoDisponible(nuevoSaldo);
@@ -79,77 +117,88 @@ public class MovimientoService {
 
         return movimientoRepository.save(movimiento);
     }
-//
-//    @Transactional
-//    public Movimiento registrarMovimientoConNumeroCuenta(Long cuentaId, TipoMovimiento tipo, BigDecimal valor) throws SaldoInsuficienteException, CuentaInexistenteException {
-//        Cuenta cuenta;
-//        cuenta = cuentaRepository.findById(cuentaId)
-//                .orElseThrow(() -> new CuentaInexistenteException("Cuenta no encontrada"));
-//
-//        //Validación del estado de la cuenta para realizar transacciones
-//        if (!cuenta.estaActiva()) {
-//            throw new IllegalStateException("La cuenta no está activa para realizar operaciones.");
-//        }
-//
-//        // Validación de movimiento duplicado
-//        if (movimientoRepository.existsByFechaAndTipoMovimientoAndValorAndCuenta(
-//                new Date(), tipo, valor, cuenta)) {
-//            throw new IllegalArgumentException("Movimiento duplicado");
-//        }
-//
-//        BigDecimal nuevoSaldo = tipo == TipoMovimiento.RETIRO
-//                ? cuenta.getSaldoDisponible().subtract(valor)
-//                : cuenta.getSaldoDisponible().add(valor);
-//
-//        //Solo el RETIRO puede causar saldo cero o menor
-//        if (tipo == TipoMovimiento.RETIRO && nuevoSaldo.compareTo(BigDecimal.ZERO) < 0) {
-//            throw new SaldoInsuficienteException("Saldo no disponible");
-//        }
-//
-//
-//        cuenta.setSaldoDisponible(nuevoSaldo);
-//        cuentaRepository.save(cuenta);
-//
-//        Movimiento movimiento = new Movimiento(null, new Date(), tipo, valor, nuevoSaldo, cuenta);
-//        
-//        return movimientoRepository.save(movimiento);
-//    }
-
-    public List<Movimiento> listarMovimientos() {
-        return movimientoRepository.findAll();
-    }
 
     public Movimiento obtenerPorId(Long id) {
         return movimientoRepository.findById(id).orElse(null);
     }
 
-    public Movimiento actualizarMovimiento(Long id, TipoMovimiento tipo, BigDecimal valor) throws SaldoInsuficienteException, CuentaInexistenteException {
+//    public Movimiento actualizarMovimiento(Long id, TipoMovimiento tipo, BigDecimal valor) throws SaldoInsuficienteException, CuentaInexistenteException {
+//        Movimiento movimiento = movimientoRepository.findById(id)
+//                .orElseThrow(() -> new IllegalArgumentException("Movimiento no encontrado"));
+//
+//        Cuenta cuenta = movimiento.getCuenta();
+//
+//        // Revertir el saldo anterior
+//        BigDecimal saldoRevertido = movimiento.getTipoMovimiento() == TipoMovimiento.RETIRO
+//                ? cuenta.getSaldoDisponible().add(movimiento.getValor())
+//                : cuenta.getSaldoDisponible().subtract(movimiento.getValor());
+//
+//        // Aplicar nuevo movimiento
+//        BigDecimal nuevoSaldo = tipo == TipoMovimiento.RETIRO
+//                ? saldoRevertido.subtract(valor)
+//                : saldoRevertido.add(valor);
+//
+//        if (tipo == TipoMovimiento.RETIRO && nuevoSaldo.compareTo(BigDecimal.ZERO) < 0) {
+//            throw new SaldoInsuficienteException("Saldo insuficiente");
+//        }
+//
+//        cuenta.setSaldoDisponible(nuevoSaldo);
+//        cuentaRepository.save(cuenta);
+//
+//        movimiento.setTipoMovimiento(tipo);
+//        movimiento.setValor(valor);
+//        movimiento.setSaldo(nuevoSaldo);
+//        movimiento.setFecha(new Date());
+//
+//        return movimientoRepository.save(movimiento);
+//    }
+    @Transactional
+    public Movimiento actualizarMovimiento(Long id, TipoMovimiento tipo, BigDecimal valor)
+            throws SaldoInsuficienteException, CuentaInexistenteException {
+
         Movimiento movimiento = movimientoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Movimiento no encontrado"));
 
-        Cuenta cuenta = movimiento.getCuenta();
+        Cuenta cuenta = cuentaRepository.findByNumeroCuenta(movimiento.getCuenta().getNumeroCuenta())
+                .orElseThrow(() -> new CuentaInexistenteException("Cuenta no encontrada"));
 
-        // Revertir el saldo anterior
-        BigDecimal saldoRevertido = movimiento.getTipoMovimiento() == TipoMovimiento.RETIRO
-                ? cuenta.getSaldoDisponible().add(movimiento.getValor())
-                : cuenta.getSaldoDisponible().subtract(movimiento.getValor());
-
-        // Aplicar nuevo movimiento
-        BigDecimal nuevoSaldo = tipo == TipoMovimiento.RETIRO
-                ? saldoRevertido.subtract(valor)
-                : saldoRevertido.add(valor);
-
-        if (tipo == TipoMovimiento.RETIRO && nuevoSaldo.compareTo(BigDecimal.ZERO) < 0) {
-            throw new SaldoInsuficienteException("Saldo insuficiente");
+        if (!cuenta.estaActiva()) {
+            throw new IllegalStateException("La cuenta está inactiva");
         }
 
-        cuenta.setSaldoDisponible(nuevoSaldo);
-        cuentaRepository.save(cuenta);
+        // Validación de duplicado
+        if (movimientoRepository.existsByFechaAndTipoMovimientoAndValorAndCuenta(
+                movimiento.getFecha(), tipo, valor, cuenta)) {
+            throw new IllegalArgumentException("Movimiento duplicado");
+        }
 
+        // Validación de signo
+        if (tipo == TipoMovimiento.DEPOSITO && valor.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Valor debe ser positivo");
+        }
+
+        if (tipo == TipoMovimiento.RETIRO && valor.compareTo(BigDecimal.ZERO) > 0) {
+            throw new IllegalArgumentException("Valor debe ser negativo");
+        }
+
+        // Revertir el saldo anterior
+        BigDecimal saldoActual = cuenta.getSaldoDisponible().subtract(movimiento.getValor());
+
+        // Aplicar el nuevo valor
+        BigDecimal nuevoSaldo = saldoActual.add(valor);
+
+        if (tipo == TipoMovimiento.RETIRO && nuevoSaldo.compareTo(BigDecimal.ZERO) < 0) {
+            throw new SaldoInsuficienteException("Saldo no disponible");
+        }
+
+        // Actualizar movimiento
         movimiento.setTipoMovimiento(tipo);
         movimiento.setValor(valor);
         movimiento.setSaldo(nuevoSaldo);
-        movimiento.setFecha(new Date());
+
+        // Actualizar cuenta
+        cuenta.setSaldoDisponible(nuevoSaldo);
+        cuentaRepository.save(cuenta);
 
         return movimientoRepository.save(movimiento);
     }

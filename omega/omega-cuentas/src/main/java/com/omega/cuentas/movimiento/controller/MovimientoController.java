@@ -80,21 +80,10 @@ public class MovimientoController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Movimiento no encontrado");
         }
     }
-
-    // Eliminar movimiento por ID
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminar(@PathVariable Long id) {
-        boolean eliminado = movimientoService.eliminarMovimiento(id);
-        if (eliminado) {
-            return ResponseEntity.ok("Movimiento eliminado correctamente");
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Movimiento no encontrado");
-        }
-    }
-
-    // Actualizar movimiento (si aplica en tu lógica)
+    
+        // Actualizar movimiento (si aplica en tu lógica)
     @PutMapping("/{id}")
-    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody @Valid MovimientoDTO movimientoDTO) {
+    public ResponseEntity<?> actualizarPorIdMovimiento(@PathVariable Long id, @RequestBody @Valid MovimientoDTO movimientoDTO) {
         try {
             Movimiento actualizado = movimientoService.actualizarMovimiento(
                     id,
@@ -110,5 +99,18 @@ public class MovimientoController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
+
+    // Eliminar movimiento por ID
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> eliminar(@PathVariable Long id) {
+        boolean eliminado = movimientoService.eliminarMovimiento(id);
+        if (eliminado) {
+            return ResponseEntity.ok("Movimiento eliminado correctamente");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Movimiento no encontrado");
+        }
+    }
+
+
 
 }
