@@ -16,6 +16,7 @@ import java.util.Optional;
 
 @Service
 public class MovimientoService {
+
     @Autowired
     private final CuentaRepository cuentaRepository;
     @Autowired
@@ -43,21 +44,39 @@ public class MovimientoService {
             throw new IllegalArgumentException("Movimiento duplicado");
         }
 
-        BigDecimal nuevoSaldo = tipo == TipoMovimiento.RETIRO
-                ? cuenta.getSaldoDisponible().subtract(valor)
-                : cuenta.getSaldoDisponible().add(valor);
+        BigDecimal nuevoSaldo;
+
+        if (tipo == TipoMovimiento.DEPOSITO && valor.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Valor debe ser positivo");
+        } else {
+            nuevoSaldo = cuenta.getSaldoDisponible().add(valor);
+        }
+
+        if (tipo == TipoMovimiento.RETIRO && valor.compareTo(BigDecimal.ZERO) > 0) {
+            throw new IllegalArgumentException("Valor debe ser negativo");
+        } else {
+            nuevoSaldo = cuenta.getSaldoDisponible().add(valor);
+        }
 
         //Solo el RETIRO puede causar saldo cero o menor
         if (tipo == TipoMovimiento.RETIRO && nuevoSaldo.compareTo(BigDecimal.ZERO) < 0) {
             throw new SaldoInsuficienteException("Saldo no disponible");
         }
 
+//        BigDecimal absValor = valor.abs();
+//        if (tipo == TipoMovimiento.RETIRO) {
+//            nuevoSaldo = cuenta.getSaldoDisponible().subtract(absValor);
+//            valor = absValor.multiply(new BigDecimal("-1"));
+//        } else {
+//            nuevoSaldo = cuenta.getSaldoDisponible().add(valor);
+//            valor = absValor;
+//        }
 
         Movimiento movimiento = new Movimiento(null, new Date(), tipo, valor, nuevoSaldo, cuenta);
 
         cuenta.setSaldoDisponible(nuevoSaldo);
         cuentaRepository.save(cuenta);
-        
+
         return movimientoRepository.save(movimiento);
     }
 //
@@ -95,7 +114,6 @@ public class MovimientoService {
 //        
 //        return movimientoRepository.save(movimiento);
 //    }
-
 
     public List<Movimiento> listarMovimientos() {
         return movimientoRepository.findAll();
@@ -136,7 +154,6 @@ public class MovimientoService {
         return movimientoRepository.save(movimiento);
     }
 
-
 //    @Transactional
 //    public Movimiento revertirMovimiento(Long idMovimientoOriginal) {
 //        Movimiento original = movimientoRepository.findById(idMovimientoOriginal)
@@ -168,8 +185,6 @@ public class MovimientoService {
 //
 //        return reverso;
 //    }
-
-
     @Transactional
     public boolean eliminarMovimiento(Long id) {
         Optional<Movimiento> movimientoOpt = movimientoRepository.findById(id);
@@ -196,4 +211,3 @@ public class MovimientoService {
         return false;
     }
 }
-
