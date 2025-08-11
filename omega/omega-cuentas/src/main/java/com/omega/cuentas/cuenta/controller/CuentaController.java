@@ -60,7 +60,6 @@ public class CuentaController {
     public ResponseEntity<?> crearCuentaPorNombre(@Valid @RequestBody CuentaCreateDTO dto) {
 
         try {
-
             if (dto.getNombreCliente() == null || dto.getNombreCliente().isBlank()) {
                 throw new IllegalArgumentException("El nombre del cliente es obligatorio");
             }

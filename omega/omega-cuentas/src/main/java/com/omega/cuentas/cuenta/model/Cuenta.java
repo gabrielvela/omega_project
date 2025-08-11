@@ -1,6 +1,5 @@
 package com.omega.cuentas.cuenta.model;
 
-import com.omega.cuentas.cuenta.dto.CuentaDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -8,7 +7,8 @@ import lombok.*;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "cuenta", uniqueConstraints = {@UniqueConstraint(columnNames = "numeroCuenta")})
+@Table(name = "cuenta", uniqueConstraints = {
+    @UniqueConstraint(columnNames = "numeroCuenta")})
 @Data //Genera automáticamente getters, setters, toString, equals, hashCode
 @NoArgsConstructor //Crea un constructor vacío (sin parámetros)
 @AllArgsConstructor //Crea un constructor con todos los campos
@@ -55,32 +55,7 @@ public class Cuenta {
         return Boolean.FALSE.equals(this.estado);
     }
 
-    public static CuentaDTO convertirCuentaADTO(Cuenta cuenta) {
-        CuentaDTO dto = new CuentaDTO();
-        dto.setId(cuenta.getId());
-        dto.setNumeroCuenta(cuenta.getNumeroCuenta());
-        dto.setTipoCuenta(cuenta.getTipoCuenta());
-        dto.setSaldoInicial(cuenta.getSaldoInicial());
-        dto.setSaldoDisponible(cuenta.getSaldoDisponible());
-        dto.setEstado(cuenta.getEstado());
-        dto.setClienteId(cuenta.getClienteId());
-        return dto;
-    }
-
-    public static Cuenta convertirDTOACuenta(CuentaDTO dto) {
-        Cuenta cuenta = new Cuenta();
-        cuenta.setId(dto.getId());
-        cuenta.setClienteId(dto.getClienteId());
-        cuenta.setNumeroCuenta(dto.getNumeroCuenta());
-        cuenta.setTipoCuenta(dto.getTipoCuenta());
-        cuenta.setSaldoInicial(dto.getSaldoInicial());
-        cuenta.setSaldoDisponible(dto.getSaldoInicial());
-        cuenta.setEstado(dto.getEstado());
-        return cuenta;
-    }
-
     //Getters y Setters
-
     public Long getId() {
         return id;
     }
@@ -89,7 +64,9 @@ public class Cuenta {
         this.id = id;
     }
 
-    public @NotBlank @Size(max = 20) String getNumeroCuenta() {
+    public @NotBlank
+    @Size(max = 20)
+    String getNumeroCuenta() {
         return numeroCuenta;
     }
 
@@ -105,7 +82,9 @@ public class Cuenta {
         this.tipoCuenta = tipoCuenta;
     }
 
-    public @NotNull @DecimalMin(value = "0.0", inclusive = true) BigDecimal getSaldoInicial() {
+    public @NotNull
+    @DecimalMin(value = "0.0", inclusive = true)
+    BigDecimal getSaldoInicial() {
         return saldoInicial;
     }
 
@@ -113,7 +92,8 @@ public class Cuenta {
         this.saldoInicial = saldoInicial;
     }
 
-    public @NotNull Boolean getEstado() {
+    public @NotNull
+    Boolean getEstado() {
         return estado;
     }
 
@@ -121,7 +101,9 @@ public class Cuenta {
         this.estado = estado;
     }
 
-    public @NotNull @DecimalMin(value = "0.0", inclusive = true) BigDecimal getSaldoDisponible() {
+    public @NotNull
+    @DecimalMin(value = "0.0", inclusive = true)
+    BigDecimal getSaldoDisponible() {
         return saldoDisponible;
     }
 
@@ -129,7 +111,8 @@ public class Cuenta {
         this.saldoDisponible = saldoDisponible;
     }
 
-    public @NotNull Long getClienteId() {
+    public @NotNull
+    Long getClienteId() {
         return clienteId;
     }
 

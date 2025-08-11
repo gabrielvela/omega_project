@@ -1,5 +1,6 @@
 package com.omega.cuentas.cuenta.dto;
 
+import com.omega.cuentas.cuenta.model.Cuenta;
 import com.omega.cuentas.cuenta.model.TipoCuenta;
 
 import java.math.BigDecimal;
@@ -49,4 +50,30 @@ public class CuentaDTO {
     public void setClienteId(Long clienteId) {
         this.clienteId = clienteId;
     }
+    
+    public static CuentaDTO convertirCuentaADTO(Cuenta cuenta) {
+        CuentaDTO dto = new CuentaDTO();
+        dto.setId(cuenta.getId());
+        dto.setNumeroCuenta(cuenta.getNumeroCuenta());
+        dto.setTipoCuenta(cuenta.getTipoCuenta());
+        dto.setSaldoInicial(cuenta.getSaldoInicial());
+        dto.setSaldoDisponible(cuenta.getSaldoDisponible());
+        dto.setEstado(cuenta.getEstado());
+        dto.setClienteId(cuenta.getClienteId());
+        return dto;
+    }
+
+    public static Cuenta convertirDTOACuenta(CuentaDTO dto) {
+        Cuenta cuenta = new Cuenta();
+        cuenta.setId(dto.getId());
+        cuenta.setClienteId(dto.getClienteId());
+        cuenta.setNumeroCuenta(dto.getNumeroCuenta());
+        cuenta.setTipoCuenta(dto.getTipoCuenta());
+        cuenta.setSaldoInicial(dto.getSaldoInicial());
+        cuenta.setSaldoDisponible(dto.getSaldoInicial());
+        cuenta.setEstado(dto.getEstado());
+        return cuenta;
+    }
+
+    
 }

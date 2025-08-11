@@ -1,5 +1,6 @@
 package com.omega.cuentas;
 
+import com.omega.cuentas.cuenta.dto.CuentaDTO;
 import com.omega.cuentas.cuenta.model.Cuenta;
 import com.omega.cuentas.cuenta.model.TipoCuenta;
 import com.omega.cuentas.cuenta.repository.CuentaRepository;
@@ -43,7 +44,7 @@ class CuentaServiceTest {
         cuenta.setClienteId(clienteId);
         cuenta.setEstado(true);
 
-        Cuenta cuentaGuardada = cuentaService.crear(Cuenta.convertirCuentaADTO(cuenta));
+        Cuenta cuentaGuardada = cuentaService.crear(CuentaDTO.convertirCuentaADTO(cuenta));
 
         assertNotNull(cuentaGuardada.getId());
         assertEquals(clienteId, cuentaGuardada.getClienteId());
@@ -64,7 +65,7 @@ class CuentaServiceTest {
         cuenta.setEstado(true);
 
         assertThrows(ClienteNoEncontradoException.class, () -> {
-            cuentaService.crear(Cuenta.convertirCuentaADTO(cuenta));
+            cuentaService.crear(CuentaDTO.convertirCuentaADTO(cuenta));
         });
     }
 }

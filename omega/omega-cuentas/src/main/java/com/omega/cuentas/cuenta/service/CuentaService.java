@@ -32,7 +32,6 @@ public class CuentaService {
         this.clienteValidatorService = clienteValidatorService;
     }
 
-
     public List<Cuenta> listarTodos() {
         return cuentaRepository.findAll();
     }
@@ -40,7 +39,6 @@ public class CuentaService {
 //    public Optional<Cuenta> obtenerPorNumeroCuenta(String numeroCuenta) {
 //        return cuentaRepository.findByNumeroCuenta(numeroCuenta);
 //    }
-
     public Optional<CuentaResponseDTO> obtenerPorNumeroCuenta(String numeroCuenta) {
 
         return cuentaRepository.findByNumeroCuenta(numeroCuenta)
@@ -70,33 +68,27 @@ public class CuentaService {
 //        }
 //        return cuentaRepository.save(cuenta);
 //    }
-
     @Transactional
-    public Cuenta crear(CuentaDTO cuentaDTO) {
-        clienteValidatorService.validarExistenciaCliente(cuentaDTO.getClienteId());
+    public Cuenta crear(CuentaDTO dto) {
+        clienteValidatorService.validarExistenciaCliente(dto.getClienteId());
 
-        Cuenta cuenta = Cuenta.convertirDTOACuenta(cuentaDTO);
-        cuenta.setSaldoDisponible(cuenta.getSaldoInicial());
-        cuenta.setEstado(true);
+        dto.setSaldoDisponible(dto.getSaldoInicial());
+        dto.setEstado(Boolean.TRUE);
 
-        if (existePorNumeroCuenta(cuenta.getNumeroCuenta())) {
+//        Cuenta cuenta = CuentaDTO.convertirDTOACuenta(dto);
+        if (existePorNumeroCuenta(dto.getNumeroCuenta())) {
             throw new IllegalArgumentException("Ya existe una cuenta con ese número.");
         }
 
-        return cuentaRepository.save(cuenta);
+        return cuentaRepository.save(CuentaDTO.convertirDTOACuenta(dto));
     }
 
     @Transactional
     public Cuenta crearPorNombreCliente(CuentaCreateDTO dto) {
         Long clienteId = clienteValidatorService.obtenerClienteIdPorNombre(dto.getNombreCliente());
 
-        Cuenta cuenta = new Cuenta();
-        cuenta.setNumeroCuenta(dto.getNumeroCuenta());
-        cuenta.setTipoCuenta(dto.getTipoCuenta());
-        cuenta.setSaldoInicial(dto.getSaldoInicial());
-        cuenta.setSaldoDisponible(dto.getSaldoInicial());
-        //cuenta.setEstado(dto.getEstado());
-        cuenta.setEstado(true);
+        Cuenta cuenta = CuentaCreateDTO.transformarDTOaCuenta(dto);
+        cuenta.setEstado(Boolean.TRUE);
         cuenta.setClienteId(clienteId);
 
         if (existePorNumeroCuenta(cuenta.getNumeroCuenta())) {
@@ -105,7 +97,6 @@ public class CuentaService {
 
         return cuentaRepository.save(cuenta);
     }
-
 
 //    @Transactional
 //    public Cuenta actualizar(Long id, Cuenta cuentaActualizada) {
@@ -117,35 +108,32 @@ public class CuentaService {
 //        cuenta.setSaldoDisponible(cuentaActualizada.getSaldoDisponible());
 //        return cuentaRepository.save(cuenta);
 //    }
-
     @Transactional
     public CuentaResponseDTO actualizarPorNumeroCuenta(String numeroCuenta, CuentaUpdateDTO cuentaActualizada) {
         Cuenta cuenta = cuentaRepository.findByNumeroCuenta(numeroCuenta)
                 .orElseThrow(() -> new IllegalArgumentException("Cuenta no encontrada."));
 
-        cuenta.setNumeroCuenta(cuentaActualizada.getNumeroCuenta());
-        cuenta.setTipoCuenta(cuentaActualizada.getTipoCuenta());
-        cuenta.setEstado(cuentaActualizada.getEstado());
-        cuenta.setSaldoInicial(cuentaActualizada.getSaldoInicial());
-        cuenta.setSaldoDisponible(cuentaActualizada.getSaldoDisponible());
-//        cuenta.setClienteId(clienteId);
-
+//        cuenta.setNumeroCuenta(cuentaActualizada.getNumeroCuenta());
+//        cuenta.setTipoCuenta(cuentaActualizada.getTipoCuenta());
+//        cuenta.setEstado(cuentaActualizada.getEstado());
+//        cuenta.setSaldoInicial(cuentaActualizada.getSaldoInicial());
+//        cuenta.setSaldoDisponible(cuentaActualizada.getSaldoDisponible());
+        cuenta = CuentaUpdateDTO.transformarDTOaCuenta(cuenta, cuentaActualizada);
+        
         Cuenta cuentaGuardada = cuentaRepository.save(cuenta);
 
         String nombreCliente = clienteValidatorService.obtenerNombrePorId(cuentaGuardada.getClienteId());
 
-        CuentaResponseDTO dto = new CuentaResponseDTO();
-        dto.setId(cuentaGuardada.getId());
-        dto.setNumeroCuenta(cuentaGuardada.getNumeroCuenta());
-        dto.setTipoCuenta(cuentaGuardada.getTipoCuenta());
-        dto.setSaldoInicial(cuentaGuardada.getSaldoInicial());
-        dto.setSaldoDisponible(cuentaGuardada.getSaldoDisponible());
-        dto.setEstado(cuentaGuardada.getEstado());
-        dto.setNombreCliente(nombreCliente);
-
-        return dto;
+//        CuentaResponseDTO dto = new CuentaResponseDTO();
+//        dto.setId(cuentaGuardada.getId());
+//        dto.setNumeroCuenta(cuentaGuardada.getNumeroCuenta());
+//        dto.setTipoCuenta(cuentaGuardada.getTipoCuenta());
+//        dto.setSaldoInicial(cuentaGuardada.getSaldoInicial());
+//        dto.setSaldoDisponible(cuentaGuardada.getSaldoDisponible());
+//        dto.setEstado(cuentaGuardada.getEstado());
+//        dto.setNombreCliente(nombreCliente);
+        return CuentaResponseDTO.transformarCuentaADTO(cuenta, nombreCliente);
     }
-
 
     @Transactional
     public void eliminar(Long id) {
