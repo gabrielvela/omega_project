@@ -43,7 +43,7 @@ class CountServiceApplicationTests {
 		Long cuentaId = cuenta.getId();
 
 		assertThrows(IllegalStateException.class, () -> {
-			servicio.registrarMovimiento(cuentaId, TipoMovimiento.DEBITO, new BigDecimal("12.50"));
+			servicio.registrarMovimiento(cuentaId, TipoMovimiento.RETIRO, new BigDecimal("12.50"));
 		});
 	}
 }

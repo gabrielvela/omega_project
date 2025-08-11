@@ -43,12 +43,12 @@ public class MovimientoService {
             throw new IllegalArgumentException("Movimiento duplicado");
         }
 
-        BigDecimal nuevoSaldo = tipo == TipoMovimiento.DEBITO
+        BigDecimal nuevoSaldo = tipo == TipoMovimiento.RETIRO
                 ? cuenta.getSaldoDisponible().subtract(valor)
                 : cuenta.getSaldoDisponible().add(valor);
 
-        //Solo el DEBITO puede causar saldo cero o menor
-        if (tipo == TipoMovimiento.DEBITO && nuevoSaldo.compareTo(BigDecimal.ZERO) < 0) {
+        //Solo el RETIRO puede causar saldo cero o menor
+        if (tipo == TipoMovimiento.RETIRO && nuevoSaldo.compareTo(BigDecimal.ZERO) < 0) {
             throw new SaldoInsuficienteException("Saldo no disponible");
         }
 
@@ -90,16 +90,16 @@ public class MovimientoService {
         Cuenta cuenta = movimiento.getCuenta();
 
         // Revertir el saldo anterior
-        BigDecimal saldoRevertido = movimiento.getTipoMovimiento() == TipoMovimiento.DEBITO
+        BigDecimal saldoRevertido = movimiento.getTipoMovimiento() == TipoMovimiento.RETIRO
                 ? cuenta.getSaldoDisponible().add(movimiento.getValor())
                 : cuenta.getSaldoDisponible().subtract(movimiento.getValor());
 
         // Aplicar nuevo movimiento
-        BigDecimal nuevoSaldo = tipo == TipoMovimiento.DEBITO
+        BigDecimal nuevoSaldo = tipo == TipoMovimiento.RETIRO
                 ? saldoRevertido.subtract(valor)
                 : saldoRevertido.add(valor);
 
-        if (tipo == TipoMovimiento.DEBITO && nuevoSaldo.compareTo(BigDecimal.ZERO) < 0) {
+        if (tipo == TipoMovimiento.RETIRO && nuevoSaldo.compareTo(BigDecimal.ZERO) < 0) {
             throw new SaldoInsuficienteException("Saldo insuficiente");
         }
 
@@ -127,13 +127,13 @@ public class MovimientoService {
 //        reverso.setCuenta(cuenta);
 //        reverso.setFecha(new Date());
 //        reverso.setValor(original.getValor());
-//        reverso.setTipoMovimiento(original.getTipoMovimiento() == TipoMovimiento.CREDITO
-//                ? TipoMovimiento.DEBITO
-//                : TipoMovimiento.CREDITO);
+//        reverso.setTipoMovimiento(original.getTipoMovimiento() == TipoMovimiento.DEPOSITO
+//                ? TipoMovimiento.RETIRO
+//                : TipoMovimiento.DEPOSITO);
 //        reverso.setDescripcion("Reverso de movimiento ID " + original.getId());
 //
 //        // Actualizar saldo
-//        BigDecimal nuevoSaldo = reverso.getTipoMovimiento() == TipoMovimiento.CREDITO
+//        BigDecimal nuevoSaldo = reverso.getTipoMovimiento() == TipoMovimiento.DEPOSITO
 //                ? cuenta.getSaldoDisponible().add(reverso.getValor())
 //                : cuenta.getSaldoDisponible().subtract(reverso.getValor());
 //
@@ -157,9 +157,9 @@ public class MovimientoService {
             Cuenta cuenta = movimiento.getCuenta();
 
             // Revertir el efecto del movimiento en el saldo
-            if (movimiento.getTipoMovimiento() == TipoMovimiento.CREDITO) {
+            if (movimiento.getTipoMovimiento() == TipoMovimiento.DEPOSITO) {
                 cuenta.setSaldoDisponible(cuenta.getSaldoDisponible().subtract(movimiento.getValor())); // ✅ Correcto
-            } else if (movimiento.getTipoMovimiento() == TipoMovimiento.DEBITO) {
+            } else if (movimiento.getTipoMovimiento() == TipoMovimiento.RETIRO) {
                 cuenta.setSaldoDisponible(cuenta.getSaldoDisponible().add(movimiento.getValor()));
             }
 
