@@ -122,36 +122,6 @@ public class MovimientoService {
         return movimientoRepository.findById(id).orElse(null);
     }
 
-//    public Movimiento actualizarMovimiento(Long id, TipoMovimiento tipo, BigDecimal valor) throws SaldoInsuficienteException, CuentaInexistenteException {
-//        Movimiento movimiento = movimientoRepository.findById(id)
-//                .orElseThrow(() -> new IllegalArgumentException("Movimiento no encontrado"));
-//
-//        Cuenta cuenta = movimiento.getCuenta();
-//
-//        // Revertir el saldo anterior
-//        BigDecimal saldoRevertido = movimiento.getTipoMovimiento() == TipoMovimiento.RETIRO
-//                ? cuenta.getSaldoDisponible().add(movimiento.getValor())
-//                : cuenta.getSaldoDisponible().subtract(movimiento.getValor());
-//
-//        // Aplicar nuevo movimiento
-//        BigDecimal nuevoSaldo = tipo == TipoMovimiento.RETIRO
-//                ? saldoRevertido.subtract(valor)
-//                : saldoRevertido.add(valor);
-//
-//        if (tipo == TipoMovimiento.RETIRO && nuevoSaldo.compareTo(BigDecimal.ZERO) < 0) {
-//            throw new SaldoInsuficienteException("Saldo insuficiente");
-//        }
-//
-//        cuenta.setSaldoDisponible(nuevoSaldo);
-//        cuentaRepository.save(cuenta);
-//
-//        movimiento.setTipoMovimiento(tipo);
-//        movimiento.setValor(valor);
-//        movimiento.setSaldo(nuevoSaldo);
-//        movimiento.setFecha(new Date());
-//
-//        return movimientoRepository.save(movimiento);
-//    }
     @Transactional
     public Movimiento actualizarMovimiento(Long id, TipoMovimiento tipo, BigDecimal valor)
             throws SaldoInsuficienteException, CuentaInexistenteException {
@@ -208,7 +178,8 @@ public class MovimientoService {
 //        Movimiento original = movimientoRepository.findById(idMovimientoOriginal)
 //                .orElseThrow(() -> new RuntimeException("Movimiento no encontrado"));
 //
-//        Cuenta cuenta = original.getCuenta();
+//        Cuenta cuenta = cuentaRepository.findByNumeroCuenta(movimiento.getCuenta().getNumeroCuenta())
+//                .orElseThrow(() -> new CuentaInexistenteException("Cuenta no encontrada"));
 //
 //        // Crear movimiento reverso
 //        Movimiento reverso = new Movimiento();
@@ -240,13 +211,14 @@ public class MovimientoService {
 
         if (movimientoOpt.isPresent()) {
             Movimiento movimiento = movimientoOpt.get();
-            Cuenta cuenta = movimiento.getCuenta();
+            Cuenta cuenta = cuentaRepository.findByNumeroCuenta(movimiento.getCuenta().getNumeroCuenta())
+                .orElseThrow(() -> new CuentaInexistenteException("Cuenta no encontrada"));
 
             // Revertir el efecto del movimiento en el saldo
             if (movimiento.getTipoMovimiento() == TipoMovimiento.DEPOSITO) {
-                cuenta.setSaldoDisponible(cuenta.getSaldoDisponible().subtract(movimiento.getValor())); // ✅ Correcto
+                cuenta.setSaldoDisponible(cuenta.getSaldoDisponible().subtract(movimiento.getValor().abs())); // ✅ Correcto
             } else if (movimiento.getTipoMovimiento() == TipoMovimiento.RETIRO) {
-                cuenta.setSaldoDisponible(cuenta.getSaldoDisponible().add(movimiento.getValor()));
+                cuenta.setSaldoDisponible(cuenta.getSaldoDisponible().add(movimiento.getValor().abs()));
             }
 
             // Guardar el nuevo saldo
