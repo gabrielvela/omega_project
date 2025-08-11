@@ -23,22 +23,24 @@ public class ReporteController {
         this.reporteService = reporteService;
     }
 
-//    @GetMapping
-//    public ResponseEntity<EstadoCuentaResponseDTO> obtenerEstadoCuenta(
+//    @GetMapping()
+//    public ResponseEntity<List<MovimientoReporteDTO>> obtenerEstadoCuenta(
 //            @RequestParam Long clienteId,
 //            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
 //            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
 //
-//        EstadoCuentaResponseDTO response = reporteService.generarEstadoCuenta(clienteId, fechaInicio, fechaFin);
-//        return ResponseEntity.ok(response);
+//        List<MovimientoReporteDTO> reporte = reporteService.generarEstadoCuenta(clienteId, fechaInicio, fechaFin);
+//        return ResponseEntity.ok(reporte);
 //    }
-    @GetMapping()
-    public ResponseEntity<List<MovimientoReporteDTO>> obtenerEstadoCuenta(
-            @RequestParam Long clienteId,
+    
+    @GetMapping
+    public ResponseEntity<List<MovimientoReporteDTO>> obtenerEstadoCuentaPorNombre(
+            @RequestParam String nombreCliente,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
 
-        List<MovimientoReporteDTO> reporte = reporteService.generarEstadoCuenta(clienteId, fechaInicio, fechaFin);
+        List<MovimientoReporteDTO> reporte = reporteService.generarEstadoCuentaPorNombre(nombreCliente, fechaInicio, fechaFin);
         return ResponseEntity.ok(reporte);
     }
+
 }

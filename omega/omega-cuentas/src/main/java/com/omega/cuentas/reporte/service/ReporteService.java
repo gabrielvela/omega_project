@@ -27,8 +27,8 @@ public class ReporteService {
     private final ClienteValidatorService clienteValidator;
 
     public ReporteService(CuentaRepository cuentaRepository,
-                          MovimientoRepository movimientoRepository,
-                          ClienteValidatorService clienteValidator) {
+            MovimientoRepository movimientoRepository,
+            ClienteValidatorService clienteValidator) {
         this.cuentaRepository = cuentaRepository;
         this.movimientoRepository = movimientoRepository;
         this.clienteValidator = clienteValidator;
@@ -70,42 +70,72 @@ public class ReporteService {
 //
 //        return response;
 //    }
-    
-    
-    
-    
     @Transactional(readOnly = true)
-public List<MovimientoReporteDTO> generarEstadoCuenta(Long clienteId, LocalDate fechaInicio, LocalDate fechaFin) {
-    clienteValidator.validarExistenciaCliente(clienteId);
+    public List<MovimientoReporteDTO> generarEstadoCuenta(Long clienteId, LocalDate fechaInicio, LocalDate fechaFin) {
+        clienteValidator.validarExistenciaCliente(clienteId);
 
-    String nombreCliente = clienteValidator.obtenerNombrePorId(clienteId);
+        String nombreCliente = clienteValidator.obtenerNombrePorId(clienteId);
 
-    Date inicioDate = Date.from(fechaInicio.atStartOfDay(ZoneId.systemDefault()).toInstant());
-    Date finDate = Date.from(fechaFin.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date inicioDate = Date.from(fechaInicio.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date finDate = Date.from(fechaFin.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
-    List<Cuenta> cuentas = cuentaRepository.findByClienteId(clienteId);
+        List<Cuenta> cuentas = cuentaRepository.findByClienteId(clienteId);
 
-    List<MovimientoReporteDTO> reporte = new ArrayList<>();
+        List<MovimientoReporteDTO> reporte = new ArrayList<>();
 
-    for (Cuenta cuenta : cuentas) {
-        List<Movimiento> movimientos = movimientoRepository
-                .findByCuentaIdAndFechaBetween(cuenta.getId(), inicioDate, finDate);
+        for (Cuenta cuenta : cuentas) {
+            List<Movimiento> movimientos = movimientoRepository
+                    .findByCuentaIdAndFechaBetween(cuenta.getId(), inicioDate, finDate);
 
-        for (Movimiento mov : movimientos) {
-            MovimientoReporteDTO dto = new MovimientoReporteDTO();
-            dto.setFecha(mov.getFecha());
-            dto.setCliente(nombreCliente);
-            dto.setNumeroCuenta(cuenta.getNumeroCuenta());
-            dto.setTipoCuenta(cuenta.getTipoCuenta());
-            dto.setSaldoInicial(cuenta.getSaldoInicial());
-            dto.setEstado(cuenta.getEstado());
-            dto.setMovimiento(mov.getValor());
-            dto.setSaldo(mov.getSaldo());
+            for (Movimiento mov : movimientos) {
+                MovimientoReporteDTO dto = new MovimientoReporteDTO();
+                dto.setFecha(mov.getFecha());
+                dto.setCliente(nombreCliente);
+                dto.setNumeroCuenta(cuenta.getNumeroCuenta());
+                dto.setTipoCuenta(cuenta.getTipoCuenta());
+                dto.setSaldoInicial(cuenta.getSaldoInicial());
+                dto.setEstado(cuenta.getEstado());
+                dto.setMovimiento(mov.getValor());
+                dto.setSaldo(mov.getSaldo());
 
-            reporte.add(dto);
+                reporte.add(dto);
+            }
         }
+
+        return reporte;
     }
 
-    return reporte;
-}
+    @Transactional(readOnly = true)
+    public List<MovimientoReporteDTO> generarEstadoCuentaPorNombre(String nombreCliente, LocalDate fechaInicio, LocalDate fechaFin) {
+        Long clienteId = clienteValidator.obtenerClienteIdPorNombre(nombreCliente);
+
+        Date inicioDate = Date.from(fechaInicio.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date finDate = Date.from(fechaFin.atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+        List<Cuenta> cuentas = cuentaRepository.findByClienteId(clienteId);
+
+        List<MovimientoReporteDTO> reporte = new ArrayList<>();
+
+        for (Cuenta cuenta : cuentas) {
+            List<Movimiento> movimientos = movimientoRepository
+                    .findByCuentaIdAndFechaBetween(cuenta.getId(), inicioDate, finDate);
+
+            for (Movimiento mov : movimientos) {
+                MovimientoReporteDTO dto = new MovimientoReporteDTO();
+                dto.setFecha(mov.getFecha());
+                dto.setCliente(nombreCliente);
+                dto.setNumeroCuenta(cuenta.getNumeroCuenta());
+                dto.setTipoCuenta(cuenta.getTipoCuenta());
+                dto.setSaldoInicial(cuenta.getSaldoInicial());
+                dto.setEstado(cuenta.getEstado());
+                dto.setMovimiento(mov.getValor());
+                dto.setSaldo(mov.getSaldo());
+
+                reporte.add(dto);
+            }
+        }
+
+        return reporte;
+    }
+
 }
