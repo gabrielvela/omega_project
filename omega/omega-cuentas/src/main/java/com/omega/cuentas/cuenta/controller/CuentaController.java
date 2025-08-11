@@ -27,13 +27,12 @@ public class CuentaController {
         return cuentaService.listarTodos();
     }
 
-//    @GetMapping("/{numeroCuenta}")
-//    public ResponseEntity<Cuenta> obtenerPorNumero(@PathVariable String numeroCuenta) {
-//        return cuentaService.obtenerPorNumeroCuenta(numeroCuenta)
+//    @GetMapping("/{id}")
+//    public ResponseEntity<Cuenta> obtenerPorId(@PathVariable Long id) {
+//        return cuentaService.obtenerPorId(id)
 //                .map(ResponseEntity::ok)
 //                .orElse(ResponseEntity.notFound().build());
 //    }
-
     @GetMapping("/{numeroCuenta}")
     public ResponseEntity<CuentaResponseDTO> obtenerPorNumero(@PathVariable String numeroCuenta) {
 
@@ -54,10 +53,8 @@ public class CuentaController {
 //        }
 //
 //    }
-
-
     @PostMapping
-    public ResponseEntity<?> crearCuentaPorNombre(@Valid @RequestBody CuentaCreateDTO dto) {
+    public ResponseEntity<?> crearCuentaConNombreCliente(@Valid @RequestBody CuentaCreateDTO dto) {
 
         try {
             if (dto.getNombreCliente() == null || dto.getNombreCliente().isBlank()) {
@@ -74,11 +71,10 @@ public class CuentaController {
     }
 
 //    @PutMapping("/{id}")
-//    public ResponseEntity<Cuenta> actualizar(@PathVariable Long id, @RequestBody Cuenta cuentaActualizada) {
+//    public ResponseEntity<Cuenta> actualizarPorId(@PathVariable Long id, @RequestBody Cuenta cuentaActualizada) {
 //        Cuenta actualizada = cuentaService.actualizar(id, cuentaActualizada);
 //        return ResponseEntity.ok(actualizada);
 //    }
-
     @PutMapping("/{numeroCuenta}")
     public ResponseEntity<CuentaResponseDTO> actualizarPorNumeroCuenta(
             @PathVariable String numeroCuenta,
@@ -88,17 +84,31 @@ public class CuentaController {
         return ResponseEntity.ok(actualizada);
     }
 
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        cuentaService.eliminar(id);
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity<Void> eliminarPorId(@PathVariable Long id) {
+//        cuentaService.eliminar(id);
+//        return ResponseEntity.noContent().build();
+//    }
+    
+    @DeleteMapping("/{numeroCuenta}")
+    public ResponseEntity<Void> eliminarPorNumeroCuenta(@PathVariable String numeroCuenta) {
+        cuentaService.eliminarPorNumeroCuenta(numeroCuenta);
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<?> actualizarParcialmente(@PathVariable Long id, @RequestBody Map<String, Object> campos) {
+//    @PatchMapping("/{id}")
+//    public ResponseEntity<?> actualizarParcialmentePorId(@PathVariable Long id, @RequestBody Map<String, Object> campos) {
+//        try {
+//            Cuenta actualizada = cuentaService.actualizarParcialmente(id, campos);
+//            return ResponseEntity.ok(actualizada);
+//        } catch (IllegalArgumentException ex) {
+//            return ResponseEntity.badRequest().body("Error: " + ex.getMessage());
+//        }
+//    }
+    @PatchMapping("/{numeroCuenta}")
+    public ResponseEntity<?> actualizarParcialmentePorNumeroCuenta(@PathVariable String numeroCuenta, @RequestBody Map<String, Object> campos) {
         try {
-            Cuenta actualizada = cuentaService.actualizarParcialmente(id, campos);
+            Cuenta actualizada = cuentaService.actualizarParcialmentePorNumeroCuenta(numeroCuenta, campos);
             return ResponseEntity.ok(actualizada);
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.badRequest().body("Error: " + ex.getMessage());

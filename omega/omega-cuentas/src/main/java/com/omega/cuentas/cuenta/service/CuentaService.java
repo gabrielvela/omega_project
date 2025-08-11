@@ -114,12 +114,12 @@ public class CuentaService {
                 .orElseThrow(() -> new IllegalArgumentException("Cuenta no encontrada."));
 
 //        cuenta.setNumeroCuenta(cuentaActualizada.getNumeroCuenta());
-//        cuenta.setTipoCuenta(cuentaActualizada.getTipoCuenta());
-//        cuenta.setEstado(cuentaActualizada.getEstado());
+        cuenta.setTipoCuenta(cuentaActualizada.getTipoCuenta());
+        cuenta.setEstado(cuentaActualizada.getEstado());
 //        cuenta.setSaldoInicial(cuentaActualizada.getSaldoInicial());
 //        cuenta.setSaldoDisponible(cuentaActualizada.getSaldoDisponible());
-        cuenta = CuentaUpdateDTO.transformarDTOaCuenta(cuenta, cuentaActualizada);
-        
+//        cuenta = CuentaUpdateDTO.transformarDTOaCuenta(cuenta, cuentaActualizada);
+
         Cuenta cuentaGuardada = cuentaRepository.save(cuenta);
 
         String nombreCliente = clienteValidatorService.obtenerNombrePorId(cuentaGuardada.getClienteId());
@@ -135,19 +135,43 @@ public class CuentaService {
         return CuentaResponseDTO.transformarCuentaADTO(cuenta, nombreCliente);
     }
 
+//    @Transactional
+//    public void eliminar(Long id) {
+//        Optional<Cuenta> cuentaOpt = cuentaRepository.findById(id);
+//        if (cuentaOpt.isPresent()) {
+//            cuentaRepository.delete(cuentaOpt.get());
+//        } else {
+//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "La cuenta con ID " + id + " no existe");
+//        }
+//    }
     @Transactional
-    public void eliminar(Long id) {
-        Optional<Cuenta> cuentaOpt = cuentaRepository.findById(id);
+    public void eliminarPorNumeroCuenta(String numeroCuenta) {
+        Optional<Cuenta> cuentaOpt = cuentaRepository.findByNumeroCuenta(numeroCuenta);
+
         if (cuentaOpt.isPresent()) {
             cuentaRepository.delete(cuentaOpt.get());
         } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "La cuenta con ID " + id + " no existe");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "La cuenta con número " + numeroCuenta + " no existe");
         }
     }
 
+//    @Transactional
+//    public Cuenta actualizarParcialmentePorNumeroCuenta(Long id, Map<String, Object> camposActualizados) {
+//        return cuentaRepository.findById(id).map(cuenta -> {
+//            camposActualizados.forEach((key, value) -> {
+//                Field campo = ReflectionUtils.findField(Cuenta.class, key);
+//                if (campo != null) {
+//                    campo.setAccessible(true);
+//                    ReflectionUtils.setField(campo, cuenta, value);
+//                }
+//            });
+//            return cuentaRepository.save(cuenta);
+//        }).orElseThrow(() -> new IllegalArgumentException("Cuenta no encontrada."));
+//    }
+    
     @Transactional
-    public Cuenta actualizarParcialmente(Long id, Map<String, Object> camposActualizados) {
-        return cuentaRepository.findById(id).map(cuenta -> {
+    public Cuenta actualizarParcialmentePorNumeroCuenta(String numeroCuenta, Map<String, Object> camposActualizados) {
+        return cuentaRepository.findByNumeroCuenta(numeroCuenta).map(cuenta -> {
             camposActualizados.forEach((key, value) -> {
                 Field campo = ReflectionUtils.findField(Cuenta.class, key);
                 if (campo != null) {
