@@ -37,5 +37,24 @@ public class Movimiento {
     @JoinColumn(name = "cuenta_id")
     private Cuenta cuenta;
 
-    // Getters, setters, constructor y toString si lo deseas
+    // Getters, setters
+
+//    public Movimiento(Long id, Date fecha, TipoMovimiento tipoMovimiento, BigDecimal valor, BigDecimal saldo, Cuenta cuenta) {
+//        this.id = id;
+//        this.fecha = fecha;
+//        this.tipoMovimiento = tipoMovimiento;
+//        this.valor = valor;
+//        this.saldo = saldo;
+//        this.cuenta = cuenta;
+//    }
+//
+//    public Movimiento(Date fecha, TipoMovimiento tipoMovimiento, BigDecimal valor, BigDecimal saldo, Cuenta cuenta) {
+//        this.fecha = fecha;
+//        this.tipoMovimiento = tipoMovimiento;
+//        this.valor = valor;
+//        this.saldo = saldo;
+//        this.cuenta = cuenta;
+//    }
+    
+    
 }

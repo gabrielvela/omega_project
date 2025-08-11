@@ -1,7 +1,7 @@
 package com.omega.cuentas.movimiento.controller;
 
-
 import com.omega.cuentas.movimiento.dto.MovimientoDTO;
+import com.omega.cuentas.movimiento.dto.MovimientoRequestDTO;
 import com.omega.cuentas.movimiento.model.Movimiento;
 import com.omega.cuentas.movimiento.service.CuentaInexistenteException;
 import com.omega.cuentas.movimiento.service.MovimientoService;
@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/movimientos")
 public class MovimientoController {
@@ -25,19 +24,41 @@ public class MovimientoController {
 //    public MovimientoController(MovimientoService movimientoService) {
 //        this.movimientoService = movimientoService;
 //    }
-
+    
+    
     // Obtener todos los movimientos
     @GetMapping
     public ResponseEntity<List<Movimiento>> listarTodos() {
         List<Movimiento> movimientos = movimientoService.listarMovimientos();
         return ResponseEntity.ok(movimientos);
     }
+    
+//        @PostMapping
+//    public ResponseEntity<Void> registrar(@RequestBody MovimientoRequestDTO dto) {
+//        movimientoService.registrarPorNumeroCuenta(dto);
+//        return ResponseEntity.status(HttpStatus.CREATED).build();
+//    }
 
+//    @PostMapping
+//    public ResponseEntity<?> registrar(@RequestBody MovimientoDTO movimientoDTO) {
+//        try {
+//            Movimiento nuevo = movimientoService.registrarMovimientoConNumeroCuenta(
+//                    movimientoDTO.getCuentaId(),
+//                    movimientoDTO.getTipo(),
+//                    movimientoDTO.getValor()
+//            );
+//            return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
+//        } catch (SaldoInsuficienteException e) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+//        } catch (CuentaInexistenteException e) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+//        }
+//    }
     @PostMapping
-    public ResponseEntity<?> registrar(@RequestBody MovimientoDTO movimientoDTO) {
+    public ResponseEntity<?> registrarConNumeroCuenta(@RequestBody MovimientoRequestDTO movimientoDTO) {
         try {
-            Movimiento nuevo = movimientoService.registrarMovimiento(
-                    movimientoDTO.getCuentaId(),
+            Movimiento nuevo = movimientoService.registrarMovimientoConNumeroCuenta(
+                    movimientoDTO.getNumeroCuenta(),
                     movimientoDTO.getTipo(),
                     movimientoDTO.getValor()
             );
@@ -48,7 +69,6 @@ public class MovimientoController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
-
 
     // Obtener movimiento por ID
     @GetMapping("/{id}")
@@ -90,6 +110,5 @@ public class MovimientoController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
-
 
 }

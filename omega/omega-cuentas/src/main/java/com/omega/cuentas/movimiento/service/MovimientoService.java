@@ -27,9 +27,9 @@ public class MovimientoService {
     }
 
     @Transactional
-    public Movimiento registrarMovimiento(Long cuentaId, TipoMovimiento tipo, BigDecimal valor) throws SaldoInsuficienteException, CuentaInexistenteException {
+    public Movimiento registrarMovimientoConNumeroCuenta(String numeroCuenta, TipoMovimiento tipo, BigDecimal valor) throws SaldoInsuficienteException, CuentaInexistenteException {
         Cuenta cuenta;
-        cuenta = cuentaRepository.findById(cuentaId)
+        cuenta = cuentaRepository.findByNumeroCuenta(numeroCuenta)
                 .orElseThrow(() -> new CuentaInexistenteException("Cuenta no encontrada"));
 
         //Validación del estado de la cuenta para realizar transacciones
@@ -53,26 +53,48 @@ public class MovimientoService {
         }
 
 
+        Movimiento movimiento = new Movimiento(null, new Date(), tipo, valor, nuevoSaldo, cuenta);
+
         cuenta.setSaldoDisponible(nuevoSaldo);
         cuentaRepository.save(cuenta);
-
-//        Movimiento movimiento = Movimiento.builder()
-//                .fecha(Date.now())
-//                .tipoMovimiento(tipo)
-//                .valor(valor)
-//                .saldo(nuevoSaldo)
-//                .cuenta(cuenta)
-//                .build();
-
-        Movimiento movimiento = new Movimiento();
-        movimiento.setCuenta(cuenta);
-        movimiento.setTipoMovimiento(tipo);
-        movimiento.setValor(valor);
-        movimiento.setSaldo(nuevoSaldo);
-        movimiento.setFecha(new Date());
-
+        
         return movimientoRepository.save(movimiento);
     }
+//
+//    @Transactional
+//    public Movimiento registrarMovimientoConNumeroCuenta(Long cuentaId, TipoMovimiento tipo, BigDecimal valor) throws SaldoInsuficienteException, CuentaInexistenteException {
+//        Cuenta cuenta;
+//        cuenta = cuentaRepository.findById(cuentaId)
+//                .orElseThrow(() -> new CuentaInexistenteException("Cuenta no encontrada"));
+//
+//        //Validación del estado de la cuenta para realizar transacciones
+//        if (!cuenta.estaActiva()) {
+//            throw new IllegalStateException("La cuenta no está activa para realizar operaciones.");
+//        }
+//
+//        // Validación de movimiento duplicado
+//        if (movimientoRepository.existsByFechaAndTipoMovimientoAndValorAndCuenta(
+//                new Date(), tipo, valor, cuenta)) {
+//            throw new IllegalArgumentException("Movimiento duplicado");
+//        }
+//
+//        BigDecimal nuevoSaldo = tipo == TipoMovimiento.RETIRO
+//                ? cuenta.getSaldoDisponible().subtract(valor)
+//                : cuenta.getSaldoDisponible().add(valor);
+//
+//        //Solo el RETIRO puede causar saldo cero o menor
+//        if (tipo == TipoMovimiento.RETIRO && nuevoSaldo.compareTo(BigDecimal.ZERO) < 0) {
+//            throw new SaldoInsuficienteException("Saldo no disponible");
+//        }
+//
+//
+//        cuenta.setSaldoDisponible(nuevoSaldo);
+//        cuentaRepository.save(cuenta);
+//
+//        Movimiento movimiento = new Movimiento(null, new Date(), tipo, valor, nuevoSaldo, cuenta);
+//        
+//        return movimientoRepository.save(movimiento);
+//    }
 
 
     public List<Movimiento> listarMovimientos() {

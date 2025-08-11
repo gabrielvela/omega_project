@@ -41,9 +41,10 @@ class CountServiceApplicationTests {
 
 		// Ejecutar y validar
 		Long cuentaId = cuenta.getId();
+                String numeroCuenta=cuenta.getNumeroCuenta();
 
 		assertThrows(IllegalStateException.class, () -> {
-			servicio.registrarMovimiento(cuentaId, TipoMovimiento.RETIRO, new BigDecimal("12.50"));
+			servicio.registrarMovimientoConNumeroCuenta(numeroCuenta, TipoMovimiento.RETIRO, new BigDecimal("12.50"));
 		});
 	}
 }
