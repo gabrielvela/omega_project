@@ -1,6 +1,6 @@
 package com.omega.cuentas.cuenta.controller;
 
-import com.omega.cuentas.cuenta.dto.CuentaRequestDTO;
+import com.omega.cuentas.cuenta.dto.CuentaCreateDTO;
 import com.omega.cuentas.cuenta.dto.CuentaResponseDTO;
 import com.omega.cuentas.cuenta.dto.CuentaUpdateDTO;
 import com.omega.cuentas.cuenta.model.Cuenta;
@@ -57,7 +57,7 @@ public class CuentaController {
 
 
     @PostMapping
-    public ResponseEntity<?> crearCuentaPorNombre(@Valid @RequestBody CuentaRequestDTO dto) {
+    public ResponseEntity<?> crearCuentaPorNombre(@Valid @RequestBody CuentaCreateDTO dto) {
 
         try {
 

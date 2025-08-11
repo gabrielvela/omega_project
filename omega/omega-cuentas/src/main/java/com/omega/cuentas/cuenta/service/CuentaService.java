@@ -1,7 +1,7 @@
 package com.omega.cuentas.cuenta.service;
 
 import com.omega.cuentas.cuenta.dto.CuentaDTO;
-import com.omega.cuentas.cuenta.dto.CuentaRequestDTO;
+import com.omega.cuentas.cuenta.dto.CuentaCreateDTO;
 import com.omega.cuentas.cuenta.dto.CuentaResponseDTO;
 import com.omega.cuentas.cuenta.dto.CuentaUpdateDTO;
 import com.omega.cuentas.cuenta.model.Cuenta;
@@ -87,7 +87,7 @@ public class CuentaService {
     }
 
     @Transactional
-    public Cuenta crearPorNombreCliente(CuentaRequestDTO dto) {
+    public Cuenta crearPorNombreCliente(CuentaCreateDTO dto) {
         Long clienteId = clienteValidatorService.obtenerClienteIdPorNombre(dto.getNombreCliente());
 
         Cuenta cuenta = new Cuenta();
@@ -123,8 +123,12 @@ public class CuentaService {
         Cuenta cuenta = cuentaRepository.findByNumeroCuenta(numeroCuenta)
                 .orElseThrow(() -> new IllegalArgumentException("Cuenta no encontrada."));
 
+        cuenta.setNumeroCuenta(cuentaActualizada.getNumeroCuenta());
         cuenta.setTipoCuenta(cuentaActualizada.getTipoCuenta());
         cuenta.setEstado(cuentaActualizada.getEstado());
+        cuenta.setSaldoInicial(cuentaActualizada.getSaldoInicial());
+        cuenta.setSaldoDisponible(cuentaActualizada.getSaldoDisponible());
+//        cuenta.setClienteId(clienteId);
 
         Cuenta cuentaGuardada = cuentaRepository.save(cuenta);
 

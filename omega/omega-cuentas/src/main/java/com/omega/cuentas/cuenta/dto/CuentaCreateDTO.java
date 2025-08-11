@@ -4,7 +4,7 @@ import com.omega.cuentas.cuenta.model.TipoCuenta;
 
 import java.math.BigDecimal;
 
-public class CuentaRequestDTO {
+public class CuentaCreateDTO {
     private String numeroCuenta;
     private TipoCuenta tipoCuenta;
     private BigDecimal saldoInicial;
