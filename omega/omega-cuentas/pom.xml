@@ -28,7 +28,7 @@
     </scm>
     <properties>
         <java.version>21</java.version>
-        <start-class>com.omega.user.CountServiceApplication</start-class>
+        <start-class>com.omega.cuentas.CountServiceApplication</start-class>
     </properties>
     <dependencies>
         <dependency>
