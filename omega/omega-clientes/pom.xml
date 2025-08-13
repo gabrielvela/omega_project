@@ -132,6 +132,10 @@
     </dependencies>
 
     <build>
+        
+        <!--Nombre del jar generado en el build-->
+        <finalName>omega-clientes</finalName>
+        
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

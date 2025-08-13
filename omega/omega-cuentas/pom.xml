@@ -137,6 +137,10 @@
     </dependencies>
 
     <build>
+    
+        <!--Nombre del jar generado en el build-->
+        <finalName>omega-cuentas</finalName>
+    
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
