@@ -1,7 +1,9 @@
 package com.omega.clientes.dto;
 
 import com.omega.clientes.model.Cliente;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 public class ClienteDTO {
 
     private Long clienteId;

@@ -44,6 +44,9 @@ public class ClienteService {//Clase de negocio
         if (clienteRepository.existsByIdentificacion(clienteDTO.getIdentificacion())) {
             throw new IllegalArgumentException("Ya existe un cliente con esa identificación");
         }
+        if (clienteRepository.existsByNombre(clienteDTO.getNombre())) {
+            throw new IllegalArgumentException("Ya existe un cliente con ese nombre");
+        }
 
         Cliente cliente = clienteDTO.transformarDtoACliente();
         Cliente guardado = clienteRepository.save(cliente);

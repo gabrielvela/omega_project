@@ -10,6 +10,8 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
     // Métodos personalizados
     boolean existsByIdentificacion(String identificacion);
 
+    boolean existsByNombre(String nombre);
+
     Optional<Cliente> findByIdentificacion(String identificacion);
 
     Optional<Cliente> findByNombre(String nombre);
