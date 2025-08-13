@@ -2,82 +2,50 @@ package com.omega.cuentas.cuenta.dto;
 
 import com.omega.cuentas.cuenta.model.Cuenta;
 import com.omega.cuentas.cuenta.model.TipoCuenta;
+import com.omega.cuentas.integration.dto.Cliente;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
+import lombok.Data;
 
+@Data
 public class CuentaCreateDTO {
+
+    @NotBlank
     private String numeroCuenta;
+
+    @NotNull
     private TipoCuenta tipoCuenta;
+
+    @NotNull
+    @DecimalMin("0.0")
     private BigDecimal saldoInicial;
-    private Boolean estado;
-    private String nombreCliente; //
 
-    public String getNumeroCuenta() {
-        return numeroCuenta;
-    }
+    private Cliente cliente;
 
-    public void setNumeroCuenta(String numeroCuenta) {
-        this.numeroCuenta = numeroCuenta;
+    private Cuenta cuenta;
+
+    public CuentaCreateDTO() {
     }
 
-    public TipoCuenta getTipoCuenta() {
-        return tipoCuenta;
+    public CuentaCreateDTO(Cuenta cuenta, Cliente cliente) {
+        this.numeroCuenta = cuenta.getNumeroCuenta();
+        this.tipoCuenta = cuenta.getTipoCuenta();
+        this.saldoInicial = cuenta.getSaldoInicial();
+        this.cliente = cliente;
+        this.cuenta = cuenta;
     }
 
-    public void setTipoCuenta(TipoCuenta tipoCuenta) {
-        this.tipoCuenta = tipoCuenta;
-    }
-
-    public BigDecimal getSaldoInicial() {
-        return saldoInicial;
-    }
-
-    public void setSaldoInicial(BigDecimal saldoInicial) {
-        this.saldoInicial = saldoInicial;
-    }
-
-    public Boolean getEstado() {
-        return estado;
-    }
-
-    public void setEstado(Boolean estado) {
-        this.estado = estado;
-    }
-
-    public String getNombreCliente() {
-        return nombreCliente;
-    }
-
-    public void setNombreCliente(String nombreCliente) {
-        this.nombreCliente = nombreCliente;
-    }
-    
-    private static Cuenta cuenta;
-    
-    public static Cuenta transformarDTOaCuenta(CuentaCreateDTO dto){
-        
-        cuenta = new Cuenta();
-        cuenta.setNumeroCuenta(dto.getNumeroCuenta());
-        cuenta.setTipoCuenta(dto.getTipoCuenta());
-        cuenta.setSaldoInicial(dto.getSaldoInicial());
-        cuenta.setSaldoDisponible(dto.getSaldoInicial());
-        cuenta.setEstado(dto.getEstado());
-        cuenta.setEstado(true);
-//        cuenta.setClienteId(dto.getIdCliente());
-        
-        return cuenta;        
-    }
-    
-    private static CuentaCreateDTO dto;
-    public static CuentaCreateDTO transformarCuentaADTO(Cuenta c){
-        dto = new CuentaCreateDTO();
-        
-        dto.setEstado(c.getEstado());
-//        dto.setNombreCliente(c.getClienteId());
-        dto.setNumeroCuenta(c.getNumeroCuenta());
-        dto.setSaldoInicial(c.getSaldoInicial());
-        dto.setTipoCuenta(c.getTipoCuenta());
-        
-        return dto;
+    public Cuenta transformarDTOaCuenta() {
+        Cuenta cuenta = new Cuenta();
+        cuenta.setNumeroCuenta(numeroCuenta);
+        cuenta.setTipoCuenta(tipoCuenta);
+        cuenta.setSaldoInicial(saldoInicial);
+        cuenta.setSaldoDisponible(saldoInicial);
+        cuenta.setEstado(Boolean.TRUE);
+        cuenta.setClienteId(cliente.getClienteId());
+        return cuenta;
     }
 }

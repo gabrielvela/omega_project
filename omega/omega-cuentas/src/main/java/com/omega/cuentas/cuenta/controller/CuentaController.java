@@ -1,6 +1,7 @@
 package com.omega.cuentas.cuenta.controller;
 
 import com.omega.cuentas.cuenta.dto.CuentaCreateDTO;
+import com.omega.cuentas.cuenta.dto.CuentaDTO;
 import com.omega.cuentas.cuenta.dto.CuentaResponseDTO;
 import com.omega.cuentas.cuenta.dto.CuentaUpdateDTO;
 import com.omega.cuentas.cuenta.model.Cuenta;
@@ -14,104 +15,61 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/cuentas")
+@RequestMapping("/api/cuentas")
+@RequiredArgsConstructor
 public class CuentaController {
 
     @Autowired
     private CuentaService cuentaService;
 
-    @GetMapping
-    public List<Cuenta> obtenerTodas() {
-        return cuentaService.listarTodos();
+    @GetMapping("/")
+    public ResponseEntity<List<CuentaDTO>> listarTodos() {
+        List<CuentaDTO> cuentas = cuentaService.listarTodas();
+        return ResponseEntity.ok(cuentas);
     }
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<Cuenta> obtenerPorId(@PathVariable Long id) {
-//        return cuentaService.obtenerPorId(id)
-//                .map(ResponseEntity::ok)
-//                .orElse(ResponseEntity.notFound().build());
+//    @PostMapping("/crear")
+//    public ResponseEntity<CuentaCreateDTO> crearCuenta(@Valid @RequestBody CuentaCreateDTO dto) {
+//        CuentaCreateDTO creada = cuentaService.crearCuenta(dto);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(creada);
 //    }
-    @GetMapping("/{numeroCuenta}")
-    public ResponseEntity<CuentaResponseDTO> obtenerPorNumero(@PathVariable String numeroCuenta) {
 
-        return cuentaService.obtenerPorNumeroCuenta(numeroCuenta)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @PostMapping("/crear")
+    public ResponseEntity<Cuenta> crearCuenta(@RequestBody CuentaCreateDTO dto) {
+        Cuenta cuenta = cuentaService.crearCuenta(dto);
+        return ResponseEntity.ok(cuenta);
     }
 
-//    @PostMapping
-//    public ResponseEntity<?> crear(@Valid @RequestBody CuentaDTO cuentaDTO) {
-//        try {
-//            Cuenta nueva = cuentaService.crear(cuentaDTO);
-//            return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
-//        } catch (ClienteNoEncontradoException ex) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente no existe: " + ex.getMessage());
-//        } catch (IllegalArgumentException ex) {
-//            return ResponseEntity.badRequest().body("Error al crear cuenta: " + ex.getMessage());
-//        }
-//
-//    }
-    @PostMapping
-    public ResponseEntity<?> crearCuentaConNombreCliente(@Valid @RequestBody CuentaCreateDTO dto) {
+    @PutMapping("/actualizar")
+    public ResponseEntity<CuentaDTO> actualizarCuenta(
+            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) String numeroCuenta,
+            @Valid @RequestBody CuentaUpdateDTO dto) {
 
-        try {
-            if (dto.getNombreCliente() == null || dto.getNombreCliente().isBlank()) {
-                throw new IllegalArgumentException("El nombre del cliente es obligatorio");
-            }
-
-            Cuenta nueva = cuentaService.crearPorNombreCliente(dto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
-        } catch (ClienteNoEncontradoException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente no existe: " + ex.getMessage());
-        } catch (IllegalArgumentException ex) {
-            return ResponseEntity.badRequest().body("Error al crear cuenta: " + ex.getMessage());
-        }
-    }
-
-//    @PutMapping("/{id}")
-//    public ResponseEntity<Cuenta> actualizarPorId(@PathVariable Long id, @RequestBody Cuenta cuentaActualizada) {
-//        Cuenta actualizada = cuentaService.actualizar(id, cuentaActualizada);
-//        return ResponseEntity.ok(actualizada);
-//    }
-    @PutMapping("/{numeroCuenta}")
-    public ResponseEntity<CuentaResponseDTO> actualizarPorNumeroCuenta(
-            @PathVariable String numeroCuenta,
-            @RequestBody CuentaUpdateDTO cuentaActualizada) {
-
-        CuentaResponseDTO actualizada = cuentaService.actualizarPorNumeroCuenta(numeroCuenta, cuentaActualizada);
+        CuentaDTO actualizada = cuentaService.actualizarCuenta(id, numeroCuenta, dto);
         return ResponseEntity.ok(actualizada);
     }
 
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<Void> eliminarPorId(@PathVariable Long id) {
-//        cuentaService.eliminar(id);
-//        return ResponseEntity.noContent().build();
-//    }
-    
-    @DeleteMapping("/{numeroCuenta}")
-    public ResponseEntity<Void> eliminarPorNumeroCuenta(@PathVariable String numeroCuenta) {
-        cuentaService.eliminarPorNumeroCuenta(numeroCuenta);
-        return ResponseEntity.noContent().build();
+    @PatchMapping("/actualizar-parcial")
+    public ResponseEntity<CuentaDTO> actualizarParcialmente(
+            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) String numeroCuenta,
+            @RequestBody Map<String, Object> campos) {
+
+        CuentaDTO actualizada = cuentaService.actualizarParcialmente(id, numeroCuenta, campos);
+        return ResponseEntity.ok(actualizada);
     }
 
-//    @PatchMapping("/{id}")
-//    public ResponseEntity<?> actualizarParcialmentePorId(@PathVariable Long id, @RequestBody Map<String, Object> campos) {
-//        try {
-//            Cuenta actualizada = cuentaService.actualizarParcialmente(id, campos);
-//            return ResponseEntity.ok(actualizada);
-//        } catch (IllegalArgumentException ex) {
-//            return ResponseEntity.badRequest().body("Error: " + ex.getMessage());
-//        }
-//    }
-    @PatchMapping("/{numeroCuenta}")
-    public ResponseEntity<?> actualizarParcialmentePorNumeroCuenta(@PathVariable String numeroCuenta, @RequestBody Map<String, Object> campos) {
-        try {
-            Cuenta actualizada = cuentaService.actualizarParcialmentePorNumeroCuenta(numeroCuenta, campos);
-            return ResponseEntity.ok(actualizada);
-        } catch (IllegalArgumentException ex) {
-            return ResponseEntity.badRequest().body("Error: " + ex.getMessage());
-        }
+    @DeleteMapping("/eliminar")
+    public ResponseEntity<Map<String, String>> eliminarCuenta(
+            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) String numeroCuenta) {
+
+        cuentaService.eliminarCuenta(id, numeroCuenta);
+        Map<String, String> respuesta = Map.of("mensaje", "Cuenta eliminada correctamente");
+        return ResponseEntity.ok(respuesta);
     }
 }

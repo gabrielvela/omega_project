@@ -1,10 +1,12 @@
 package com.omega.cuentas;
 
+import com.omega.cuentas.cuenta.dto.CuentaCreateDTO;
 import com.omega.cuentas.cuenta.dto.CuentaDTO;
 import com.omega.cuentas.cuenta.model.Cuenta;
 import com.omega.cuentas.cuenta.model.TipoCuenta;
 import com.omega.cuentas.cuenta.repository.CuentaRepository;
 import com.omega.cuentas.cuenta.service.CuentaService;
+import com.omega.cuentas.integration.dto.Cliente;
 import com.omega.cuentas.integration.exception.ClienteNoEncontradoException;
 import com.omega.cuentas.integration.validator.ClienteValidatorService;
 import org.junit.jupiter.api.Test;
@@ -37,17 +39,16 @@ class CuentaServiceTest {
 
         Mockito.doNothing().when(clienteValidatorService).validarExistenciaCliente(clienteId);
 
-        Cuenta cuenta = new Cuenta();
-        cuenta.setNumeroCuenta("9876543210");
-        cuenta.setTipoCuenta(TipoCuenta.CORRIENTE);
-        cuenta.setSaldoInicial(BigDecimal.valueOf(5000));
-        cuenta.setClienteId(clienteId);
-        cuenta.setEstado(true);
+        CuentaCreateDTO cuentaDTO = new CuentaCreateDTO();
+        cuentaDTO.setNumeroCuenta("9876543210");
+        cuentaDTO.setTipoCuenta(TipoCuenta.CORRIENTE);
+        cuentaDTO.setSaldoInicial(BigDecimal.valueOf(5000));
+        cuentaDTO.setCliente(new Cliente(clienteId)); // o clienteDTO si tu DTO lo requiere
 
-        Cuenta cuentaGuardada = cuentaService.crear(CuentaDTO.convertirCuentaADTO(cuenta));
+        CuentaCreateDTO cuentaGuardada = cuentaService.crearCuenta(cuentaDTO);
 
-        assertNotNull(cuentaGuardada.getId());
-        assertEquals(clienteId, cuentaGuardada.getClienteId());
+        assertNotNull(cuentaGuardada.getCuenta().getId());
+        assertEquals(clienteId, cuentaGuardada.getCuenta().getClienteId());
     }
 
     @Test
@@ -57,15 +58,14 @@ class CuentaServiceTest {
         Mockito.doThrow(new ClienteNoEncontradoException(clienteId))
                 .when(clienteValidatorService).validarExistenciaCliente(clienteId);
 
-        Cuenta cuenta = new Cuenta();
-        cuenta.setNumeroCuenta("1234567890");
-        cuenta.setTipoCuenta(TipoCuenta.AHORROS);
-        cuenta.setSaldoInicial(BigDecimal.valueOf(3000));
-        cuenta.setClienteId(clienteId);
-        cuenta.setEstado(true);
+        CuentaCreateDTO cuentaDTO = new CuentaCreateDTO();
+        cuentaDTO.setNumeroCuenta("1234567890");
+        cuentaDTO.setTipoCuenta(TipoCuenta.AHORROS);
+        cuentaDTO.setSaldoInicial(BigDecimal.valueOf(3000));
+        cuentaDTO.setCliente(new Cliente(clienteId)); 
 
         assertThrows(ClienteNoEncontradoException.class, () -> {
-            cuentaService.crear(CuentaDTO.convertirCuentaADTO(cuenta));
+            cuentaService.crearCuenta(cuentaDTO);
         });
     }
 }

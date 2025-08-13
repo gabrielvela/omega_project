@@ -22,10 +22,6 @@ public class ClienteController {
     @Autowired
     private final ClienteService clienteService;
 
-//    public ClienteController(ClienteService clienteService) {
-//        this.clienteService = clienteService;
-//    }
-
     @GetMapping("/")
     public ResponseEntity<List<ClienteDTO>> listarTodos() {
         List<ClienteDTO> clientes = clienteService.listarTodos();

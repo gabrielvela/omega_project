@@ -1,7 +1,6 @@
 package com.omega.cuentas.integration.validator;
 
-
-import com.omega.cuentas.integration.dto.ClienteDTO;
+import com.omega.cuentas.integration.dto.Cliente;
 import com.omega.cuentas.integration.exception.ClienteNoEncontradoException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
@@ -18,12 +17,17 @@ public class ClienteValidatorService {
 
     private final RestTemplate restTemplate;
 
-    @Value("${servicio.usuario.url}")
+    @Value("${ws.cliente.path}")
     private String urlClientService;
 
-
-    @Value("${servicio.usuario.url.buscar.nombre}")
+    @Value("${ws.cliente.path.buscar.nombre}")
     private String pathBuscarClienteNombre;
+    
+    @Value("${ws.cliente.path.buscar.identificacion}")
+    private String pathBuscarClienteIdentificacion;
+    
+    @Value("${ws.cliente.path.buscar.id}")
+    private String pathBuscarClienteId;
 
     @Autowired
     public ClienteValidatorService(RestTemplate restTemplate) {
@@ -53,10 +57,42 @@ public class ClienteValidatorService {
         }
     }
 
+    public Cliente obtenerClientePorId(Long clienteId) {
+        String url = pathBuscarClienteId + clienteId;
+        ResponseEntity<Cliente> response = restTemplate.getForEntity(url, Cliente.class);
+
+        if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+            return response.getBody();
+        } else {
+            throw new RuntimeException("No se pudo obtener el nombre del cliente con ID: " + clienteId);
+        }
+    }
+
+    public Cliente obtenerClientePorIdentificacion(String identificacion) {
+        String url = pathBuscarClienteIdentificacion + identificacion;
+        ResponseEntity<Cliente> response = restTemplate.getForEntity(url, Cliente.class);
+
+        if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+            return response.getBody();
+        } else {
+            throw new RuntimeException("No se pudo obtener el nombre del cliente con identificacion: " + identificacion);
+        }
+    }
+
+    public Cliente obtenerClientePorNombre(String nombre) {
+        String url = pathBuscarClienteNombre + nombre;
+        ResponseEntity<Cliente> response = restTemplate.getForEntity(url, Cliente.class);
+
+        if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+            return response.getBody();
+        } else {
+            throw new RuntimeException("No se pudo obtener el nombre del cliente con nombre: " + nombre);
+        }
+    }
 
     public Long obtenerClienteIdPorNombre(String nombre) {
         String url = pathBuscarClienteNombre + nombre;
-        ResponseEntity<ClienteDTO> response = restTemplate.getForEntity(url, ClienteDTO.class);
+        ResponseEntity<Cliente> response = restTemplate.getForEntity(url, Cliente.class);
 
         if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
             return response.getBody().getClienteId();
@@ -66,8 +102,8 @@ public class ClienteValidatorService {
     }
 
     public String obtenerNombrePorId(Long clienteId) {
-        String url = "http://localhost:8080/clientes/" + clienteId;
-        ResponseEntity<ClienteDTO> response = restTemplate.getForEntity(url, ClienteDTO.class);
+        String url = urlClientService + clienteId;
+        ResponseEntity<Cliente> response = restTemplate.getForEntity(url, Cliente.class);
 
         if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
             return response.getBody().getNombre();
@@ -75,6 +111,5 @@ public class ClienteValidatorService {
             throw new RuntimeException("No se pudo obtener el nombre del cliente con ID: " + clienteId);
         }
     }
-
 
 }
