@@ -1,10 +1,20 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.omega.clientes.dto;
 
 import com.omega.clientes.model.Cliente;
+import lombok.*;
 
-public class ClienteDTO {
+/**
+ *
+ * @author Armando Gabriel
+ */
+@Data
+@NoArgsConstructor
+public class ClienteCrearDTO {
 
-    private Long clienteId;
     private String nombre;
     private String identificacion;
     private String direccion;
@@ -14,8 +24,7 @@ public class ClienteDTO {
     private int edad;
     private String contrasenia;
 
-    public ClienteDTO(Cliente cliente) {
-        this.clienteId = cliente.getClienteId();
+    public ClienteCrearDTO (Cliente cliente) {
         this.nombre = cliente.getNombre();
         this.identificacion = cliente.getIdentificacion();
         this.direccion = cliente.getDireccion();
@@ -26,24 +35,11 @@ public class ClienteDTO {
         this.contrasenia = cliente.getContrasenia();
     }
 
-    public ClienteDTO(Long clienteId, String nombre, String identificacion, String direccion, String telefono, Boolean estado, String genero, int edad, String contrasenia) {
-        this.clienteId = clienteId;
-        this.nombre = nombre;
-        this.identificacion = identificacion;
-        this.direccion = direccion;
-        this.telefono = telefono;
-        this.estado = estado;
-        this.genero = genero;
-        this.edad = edad;
-        this.contrasenia = contrasenia;
-    }
-
     private Cliente c;
 
     public Cliente transformarDtoACliente() {
         // convertir a Cliente
         c = new Cliente();
-        c.setClienteId(clienteId);
         c.setContrasenia(contrasenia);
         c.setDireccion(direccion);
         c.setEdad(edad);
@@ -57,14 +53,7 @@ public class ClienteDTO {
     }
 
 //    Getters y Setters
-    public Long getClienteId() {
-        return clienteId;
-    }
-
-    public void setClienteId(Long clienteId) {
-        this.clienteId = clienteId;
-    }
-
+   
     public String getNombre() {
         return nombre;
     }
@@ -128,6 +117,5 @@ public class ClienteDTO {
     public void setContrasenia(String contrasenia) {
         this.contrasenia = contrasenia;
     }
-
 
 }

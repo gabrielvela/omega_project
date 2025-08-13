@@ -1,95 +1,89 @@
 package com.omega.clientes.controller;
 
+import com.omega.clientes.dto.ClienteCrearDTO;
 import com.omega.clientes.dto.ClienteDTO;
-import com.omega.clientes.model.Cliente;
-import com.omega.clientes.repository.ClienteRepository;
 import com.omega.clientes.service.ClienteService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import org.springframework.validation.ObjectError;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @RestController
-@RequestMapping("/clientes")
+@RequestMapping("/api/clientes")
+@RequiredArgsConstructor
 public class ClienteController {
 
+    @Autowired
     private final ClienteService clienteService;
 
-    public ClienteController(ClienteService clienteService) {
-        this.clienteService = clienteService;
-    }
-
-    @GetMapping
-    public List<Cliente> listarTodos() {
-        return clienteService.listarTodos();
-    }
-
-    //    @PostMapping
-//    public ResponseEntity<Cliente> crear(@RequestBody Cliente cliente) {
-//        return ResponseEntity.ok(clienteService.guardar(cliente));
+//    public ClienteController(ClienteService clienteService) {
+//        this.clienteService = clienteService;
 //    }
 
-
-    @PostMapping
-    public ResponseEntity<?> crear(@Valid @RequestBody Cliente cliente, BindingResult result) {
-        if (result.hasErrors()) {
-            String errores = result.getAllErrors()
-                    .stream()
-                    .map(ObjectError::getDefaultMessage)
-                    .collect(Collectors.joining(", "));
-            return ResponseEntity.badRequest().body("Errores de validación: " + errores);
-        }
-
-        try {
-            Cliente nuevo = clienteService.crear(cliente);
-            return ResponseEntity.ok(nuevo);
-        } catch (IllegalArgumentException ex) {
-            return ResponseEntity.badRequest().body("Error al crear cliente: " + ex.getMessage());
-        }
+    @GetMapping("/")
+    public ResponseEntity<List<ClienteDTO>> listarTodos() {
+        List<ClienteDTO> clientes = clienteService.listarTodos();
+        return ResponseEntity.ok(clientes);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Cliente> obtenerPorId(@PathVariable Long id) {
-        Cliente cliente = clienteService.buscarPorId(id);
-        return cliente != null ? ResponseEntity.ok(cliente) : ResponseEntity.notFound().build();
+    @PostMapping("/crear")
+    public ResponseEntity<ClienteDTO> crear(@Valid @RequestBody ClienteCrearDTO clienteDTO) {
+        ClienteDTO nuevo = clienteService.crear(clienteDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
     }
 
+    @GetMapping("/buscar")
+    public ResponseEntity<ClienteDTO> obtenerCliente(
+            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) String identificacion) {
 
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Cliente> actualizar(@PathVariable Long id, @RequestBody Cliente clienteActualizado) {
-        Cliente actualizado = clienteService.actualizar(id, clienteActualizado);
-        return actualizado != null ? ResponseEntity.ok(actualizado) : ResponseEntity.notFound().build();
+        ClienteDTO cliente = clienteService.buscarCliente(id, identificacion);
+        return ResponseEntity.ok(cliente);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        clienteService.eliminar(id);
+    @PutMapping("/actualizar")
+    public ResponseEntity<ClienteDTO> actualizarCliente(
+            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) String identificacion,
+            @Valid @RequestBody ClienteDTO clienteDTO) {
+
+        ClienteDTO actualizado = clienteService.actualizarCliente(id, identificacion, clienteDTO);
+        return ResponseEntity.ok(actualizado);
+    }
+
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+//        clienteService.eliminar(id);
+//        return ResponseEntity.noContent().build();
+//    }
+    @DeleteMapping("/eliminar")
+    public ResponseEntity<Void> eliminarCliente(
+            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) String identificacion) {
+
+        clienteService.eliminarCliente(id, identificacion);
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/{id}")
-    public ResponseEntity<Cliente> actualizarParcialmente(@PathVariable Long id, @RequestBody Map<String, Object> campos) {
-        Cliente clienteActualizado = clienteService.actualizarParcialmente(id, campos);
-        return clienteActualizado != null ? ResponseEntity.ok(clienteActualizado) : ResponseEntity.notFound().build();
-    }
+//    @PatchMapping("/{id}")
+//    public ResponseEntity<ClienteDTO> actualizarParcialmente(@PathVariable Long id, 
+//            @RequestBody Map<String, Object> campos) {
+//        ClienteDTO actualizado = clienteService.actualizarParcialmente(id, campos);
+//        return ResponseEntity.ok(actualizado);
+//    }
+    @PatchMapping("/actualizar-parcial")
+    public ResponseEntity<ClienteDTO> actualizarParcialmente(
+            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) String identificacion,
+            @RequestBody Map<String, Object> campos) {
 
-    @Autowired
-    ClienteRepository clienteRepository;
-
-    @GetMapping("/buscar")
-    public ResponseEntity<ClienteDTO> buscarPorNombre(@RequestParam String nombre) {
-        Cliente cliente = clienteRepository.findByNombre(nombre)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente no encontrado"));
-        return ResponseEntity.ok(new ClienteDTO(cliente));
+        ClienteDTO actualizado = clienteService.actualizarParcialmenteCliente(id, identificacion, campos);
+        return ResponseEntity.ok(actualizado);
     }
 }

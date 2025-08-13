@@ -7,10 +7,10 @@ import java.util.Optional;
 
 public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 
-    // Método personalizado
-    Cliente findByIdentificacion(String identificacion);
-
+    // Métodos personalizados
     boolean existsByIdentificacion(String identificacion);
+
+    Optional<Cliente> findByIdentificacion(String identificacion);
 
     Optional<Cliente> findByNombre(String nombre);
 }
