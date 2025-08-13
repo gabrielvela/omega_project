@@ -41,9 +41,10 @@ public class ClienteController {
     @GetMapping("/buscar")
     public ResponseEntity<ClienteDTO> obtenerCliente(
             @RequestParam(required = false) Long id,
+            @RequestParam(required = false) String nombre,
             @RequestParam(required = false) String identificacion) {
 
-        ClienteDTO cliente = clienteService.buscarCliente(id, identificacion);
+        ClienteDTO cliente = clienteService.buscarCliente(id, identificacion, nombre);
         return ResponseEntity.ok(cliente);
     }
 
@@ -63,12 +64,12 @@ public class ClienteController {
 //        return ResponseEntity.noContent().build();
 //    }
     @DeleteMapping("/eliminar")
-    public ResponseEntity<Void> eliminarCliente(
+    public ResponseEntity<String> eliminarCliente(
             @RequestParam(required = false) Long id,
             @RequestParam(required = false) String identificacion) {
 
         clienteService.eliminarCliente(id, identificacion);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("Cliente eliminado correctamente");
     }
 
 //    @PatchMapping("/{id}")

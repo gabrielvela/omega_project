@@ -10,6 +10,7 @@ import java.util.Map;
 import org.springframework.util.ReflectionUtils;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
@@ -54,30 +55,6 @@ public class ClienteService {//Clase de negocio
     }
 
     /**
-     * Permite buscar el cliente por su nombre
-     *
-     * @param nombreCliente
-     * @return ClienteDTO
-     */
-    public ClienteDTO buscarPorNombre(String nombreCliente) {
-        Cliente cliente = clienteRepository.findByNombre(nombreCliente)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente no encontrado"));
-        return new ClienteDTO(cliente);
-    }
-
-    /**
-     * Permite buscar el cliente por su identificación
-     *
-     * @param identificacion
-     * @return ClienteDTO
-     */
-    public ClienteDTO buscarPorIdentificacion(String identificacion) {
-        Cliente cliente = clienteRepository.findByIdentificacion(identificacion)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente no encontrado"));
-        return new ClienteDTO(cliente);
-    }
-
-    /**
      * Permite buscar el cliente por su clienteId, identificacion o nombre
      *
      * @param clienteId
@@ -85,8 +62,8 @@ public class ClienteService {//Clase de negocio
      * @param nombre
      * @return ClienteDTO
      */
-    public ClienteDTO buscarCliente(Long clienteId, String identificacion) {
-        if (clienteId == null && identificacion == null) {
+    public ClienteDTO buscarCliente(Long clienteId, String identificacion, String nombre) {
+        if (clienteId == null && identificacion == null && nombre == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Debe proporcionar al menos un criterio de búsqueda");
         }
 
@@ -95,9 +72,12 @@ public class ClienteService {//Clase de negocio
         if (clienteId != null) {
             cliente = clienteRepository.findById(clienteId)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente con ID " + clienteId + " no encontrado"));
-        } else {
+        } else if (identificacion != null) {
             cliente = clienteRepository.findByIdentificacion(identificacion)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente con identificación " + identificacion + " no encontrado"));
+        } else {
+            cliente = clienteRepository.findByNombre(nombre)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente con nombre " + nombre + " no encontrado"));
         }
 
         return new ClienteDTO(cliente);
@@ -127,6 +107,7 @@ public class ClienteService {//Clase de negocio
         }
 
         // Actualizar campos
+        cliente.setIdentificacion(clienteDTO.getIdentificacion());
         cliente.setNombre(clienteDTO.getNombre());
         cliente.setDireccion(clienteDTO.getDireccion());
         cliente.setTelefono(clienteDTO.getTelefono());
@@ -141,6 +122,7 @@ public class ClienteService {//Clase de negocio
 
     /**
      * Permite actualizar parcialmente el cliente con los campos recibidos
+     *
      * @param clienteId
      * @param identificacion
      * @param campos
