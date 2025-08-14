@@ -25,7 +25,7 @@ public class CuentaController {
     @Autowired
     private CuentaService cuentaService;
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<List<CuentaDTO>> listarTodos() {
         List<CuentaDTO> cuentas = cuentaService.listarTodas();
         return ResponseEntity.ok(cuentas);
