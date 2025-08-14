@@ -3,15 +3,15 @@ package com.omega.cuentas.reporte.service;
 import com.omega.cuentas.cuenta.model.Cuenta;
 import com.omega.cuentas.cuenta.repository.CuentaRepository;
 import com.omega.cuentas.integration.validator.ClienteValidatorService;
+import com.omega.cuentas.movimiento.dto.MovimientoDTO;
 import com.omega.cuentas.movimiento.model.Movimiento;
 import com.omega.cuentas.movimiento.repository.MovimientoRepository;
-import com.omega.cuentas.reporte.dto.CuentaResumenDTO;
-import com.omega.cuentas.reporte.dto.EstadoCuentaResponseDTO;
+import com.omega.cuentas.reporte.dto.EstadoCuentaDTO;
 import com.omega.cuentas.reporte.dto.MovimientoReporteDTO;
-import com.omega.cuentas.reporte.dto.MovimientoRequestDTO;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
@@ -133,6 +133,43 @@ public class ReporteService {
 
                 reporte.add(dto);
             }
+        }
+
+        return reporte;
+    }
+
+    @Transactional(readOnly = true)
+    public List<EstadoCuentaDTO> generarEstadoCuentaAgrupado(String nombreCliente, LocalDate fechaInicio, LocalDate fechaFin) {
+        Long clienteId = clienteValidator.obtenerClienteIdPorNombre(nombreCliente);
+
+        Date inicioDate = Date.from(fechaInicio.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Date finDate = Date.from(fechaFin.atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant());
+
+        List<Cuenta> cuentas = cuentaRepository.findByClienteId(clienteId);
+        List<EstadoCuentaDTO> reporte = new ArrayList<>();
+
+        for (Cuenta cuenta : cuentas) {
+            List<Movimiento> movimientos = movimientoRepository
+                    .findByCuentaIdAndFechaBetween(cuenta.getId(), inicioDate, finDate);
+
+            if (movimientos.isEmpty()) {
+                continue;
+            }
+
+            EstadoCuentaDTO dto = new EstadoCuentaDTO();
+            dto.setCliente(nombreCliente);
+            dto.setNumeroCuenta(cuenta.getNumeroCuenta());
+            dto.setTipoCuenta(cuenta.getTipoCuenta());
+            dto.setSaldoInicial(cuenta.getSaldoInicial());
+            dto.setEstado(cuenta.getEstado());
+            dto.setSaldoDisponible(cuenta.getSaldoDisponible());
+
+            List<MovimientoDTO> movimientosDTO = movimientos.stream()
+                    .map(MovimientoDTO::new)
+                    .collect(Collectors.toList());
+
+            dto.setMovimientos(movimientosDTO);
+            reporte.add(dto);
         }
 
         return reporte;

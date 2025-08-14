@@ -1,6 +1,6 @@
 package com.omega.cuentas.reporte.controller;
 
-import com.omega.cuentas.reporte.dto.EstadoCuentaResponseDTO;
+import com.omega.cuentas.reporte.dto.EstadoCuentaDTO;
 import com.omega.cuentas.reporte.dto.MovimientoReporteDTO;
 import com.omega.cuentas.reporte.service.ReporteService;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -32,7 +32,6 @@ public class ReporteController {
 //        List<MovimientoReporteDTO> reporte = reporteService.generarEstadoCuenta(clienteId, fechaInicio, fechaFin);
 //        return ResponseEntity.ok(reporte);
 //    }
-    
     @GetMapping
     public ResponseEntity<List<MovimientoReporteDTO>> obtenerEstadoCuentaPorNombre(
             @RequestParam String nombreCliente,
@@ -40,6 +39,16 @@ public class ReporteController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
 
         List<MovimientoReporteDTO> reporte = reporteService.generarEstadoCuentaPorNombre(nombreCliente, fechaInicio, fechaFin);
+        return ResponseEntity.ok(reporte);
+    }
+
+    @GetMapping("/estado-cuenta")
+    public ResponseEntity<List<EstadoCuentaDTO>> obtenerEstadoCuentaAgrupado(
+            @RequestParam String nombreCliente,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
+
+        List<EstadoCuentaDTO> reporte = reporteService.generarEstadoCuentaAgrupado(nombreCliente, fechaInicio, fechaFin);
         return ResponseEntity.ok(reporte);
     }
 
