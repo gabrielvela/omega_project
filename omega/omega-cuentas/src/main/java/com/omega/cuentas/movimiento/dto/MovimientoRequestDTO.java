@@ -16,10 +16,11 @@ import lombok.Data;
 @Data
 public class MovimientoRequestDTO {
 
-    private String numeroCuenta; // ✅ nuevo campo
     private TipoMovimiento tipoMovimiento;
     private BigDecimal valor;
     private Date fecha;
 
+    private String numeroCuenta;
+    private Long idCuenta;
     // Getters y setters
 }

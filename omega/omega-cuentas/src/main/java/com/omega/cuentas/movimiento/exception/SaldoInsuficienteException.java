@@ -1,4 +1,4 @@
-package com.omega.cuentas.movimiento.service;
+package com.omega.cuentas.movimiento.exception;
 
 public class SaldoInsuficienteException extends RuntimeException {
     public SaldoInsuficienteException(String mensaje) {

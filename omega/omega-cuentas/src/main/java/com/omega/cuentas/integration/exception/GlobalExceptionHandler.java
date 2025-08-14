@@ -2,8 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.omega.cuentas.exception;
+package com.omega.cuentas.integration.exception;
 
+import com.omega.cuentas.movimiento.exception.CuentaInexistenteException;
+import com.omega.cuentas.movimiento.exception.SaldoInsuficienteException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
@@ -74,6 +76,15 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("error", "Error inesperado en la transacción"));
+    }
+
+    @ExceptionHandler(SaldoInsuficienteException.class)
+    public ResponseEntity<Map<String, String>> handleSaldoInsuficiente(SaldoInsuficienteException ex) {
+        return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
+    }
+    @ExceptionHandler(CuentaInexistenteException.class)
+    public ResponseEntity<Map<String, String>> handleCuentaInexistente(CuentaInexistenteException ex) {
+        return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
     }
 
 }

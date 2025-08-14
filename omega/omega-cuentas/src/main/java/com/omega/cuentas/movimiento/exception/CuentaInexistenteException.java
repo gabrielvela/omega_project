@@ -1,4 +1,4 @@
-package com.omega.cuentas.movimiento.service;
+package com.omega.cuentas.movimiento.exception;
 
 public class CuentaInexistenteException extends RuntimeException {
     public CuentaInexistenteException(String mensaje) {

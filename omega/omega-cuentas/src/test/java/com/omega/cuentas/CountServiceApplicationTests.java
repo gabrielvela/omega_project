@@ -3,6 +3,7 @@ package com.omega.cuentas;
 import com.omega.cuentas.cuenta.model.Cuenta;
 import com.omega.cuentas.cuenta.model.TipoCuenta;
 import com.omega.cuentas.cuenta.repository.CuentaRepository;
+import com.omega.cuentas.movimiento.dto.MovimientoRequestDTO;
 import com.omega.cuentas.movimiento.model.TipoMovimiento;
 import com.omega.cuentas.movimiento.service.MovimientoService;
 import org.junit.jupiter.api.Test;
@@ -18,33 +19,39 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SpringBootTest
 class CountServiceApplicationTests {
 
-	@Autowired
-	private MovimientoService servicio;
+    @Autowired
+    private MovimientoService servicio;
 
-	@Autowired
-	private CuentaRepository cuentaRepository;
+    @Autowired
+    private CuentaRepository cuentaRepository;
 
-	@Transactional
-	@Rollback
-	@Test
-	void noDebePermitirMovimientoSiCuentaInactiva() {
-		// Crear y guardar la cuenta inactiva
-		Cuenta cuenta = new Cuenta();
-		cuenta.setNumeroCuenta("123456");
-		cuenta.setTipoCuenta(TipoCuenta.AHORROS);
-		cuenta.setSaldoInicial(new BigDecimal("100.00"));
-		cuenta.setSaldoDisponible(cuenta.getSaldoInicial());
-		cuenta.setEstado(false);
-		cuenta.setClienteId(1L);
+    @Transactional
+    @Rollback
+    @Test
+    void noDebePermitirMovimientoSiCuentaInactiva() {
+        // Crear y guardar la cuenta inactiva
+        Cuenta cuenta = new Cuenta();
+        cuenta.setNumeroCuenta("123456");
+        cuenta.setTipoCuenta(TipoCuenta.AHORROS);
+        cuenta.setSaldoInicial(new BigDecimal("100.00"));
+        cuenta.setSaldoDisponible(cuenta.getSaldoInicial());
+        cuenta.setEstado(false);
+        cuenta.setClienteId(1L);
 
-		cuenta = cuentaRepository.save(cuenta); // ahora tiene ID
+        cuenta = cuentaRepository.save(cuenta); // ahora tiene ID
 
-		// Ejecutar y validar
-		Long cuentaId = cuenta.getId();
-                String numeroCuenta=cuenta.getNumeroCuenta();
+        // Ejecutar y validar
+        Long cuentaId = cuenta.getId();
+        String numeroCuenta = cuenta.getNumeroCuenta();
 
-		assertThrows(IllegalStateException.class, () -> {
-			servicio.registrarMovimiento(numeroCuenta, TipoMovimiento.RETIRO, new BigDecimal("12.50"));
-		});
-	}
+        MovimientoRequestDTO mov = new MovimientoRequestDTO();
+        mov.setIdCuenta(cuentaId);
+        mov.setNumeroCuenta(numeroCuenta);
+        mov.setTipoMovimiento(TipoMovimiento.RETIRO);
+        mov.setValor(new BigDecimal("12.50"));
+
+        assertThrows(IllegalStateException.class, () -> {
+            servicio.registrarMovimiento(mov);
+        });
+    }
 }

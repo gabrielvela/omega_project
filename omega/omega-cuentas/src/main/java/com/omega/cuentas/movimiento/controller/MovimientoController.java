@@ -3,9 +3,9 @@ package com.omega.cuentas.movimiento.controller;
 import com.omega.cuentas.movimiento.dto.MovimientoDTO;
 import com.omega.cuentas.movimiento.dto.MovimientoRequestDTO;
 import com.omega.cuentas.movimiento.model.Movimiento;
-import com.omega.cuentas.movimiento.service.CuentaInexistenteException;
+import com.omega.cuentas.movimiento.exception.CuentaInexistenteException;
 import com.omega.cuentas.movimiento.service.MovimientoService;
-import com.omega.cuentas.movimiento.service.SaldoInsuficienteException;
+import com.omega.cuentas.movimiento.exception.SaldoInsuficienteException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,22 +28,11 @@ public class MovimientoController {
         return ResponseEntity.ok(movimientos);
     }
 
-    @PostMapping("crear")
-    public ResponseEntity<?> registrarMovimiento(@RequestBody MovimientoRequestDTO movimientoDTO) {
-        try {
-            Movimiento nuevo = movimientoService.registrarMovimiento(
-                    movimientoDTO.getNumeroCuenta(),
-                    movimientoDTO.getTipoMovimiento(),
-                    movimientoDTO.getValor()
-            );
-            MovimientoDTO respuesta = new MovimientoDTO(nuevo);
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
-        } catch (SaldoInsuficienteException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (CuentaInexistenteException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+    @PostMapping("/crear")
+    public ResponseEntity<MovimientoDTO> crearMovimiento(@RequestBody MovimientoRequestDTO dto) {
+        Movimiento movimiento = movimientoService.registrarMovimiento(dto);
+        MovimientoDTO respuesta = new MovimientoDTO(movimiento);
+        return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
     }
 
     // Obtener movimiento por ID

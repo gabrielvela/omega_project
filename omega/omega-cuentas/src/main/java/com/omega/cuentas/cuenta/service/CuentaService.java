@@ -105,8 +105,13 @@ public class CuentaService {
         return new CuentaDTO(actualizada);
     }
 
-    // 🔍 Método privado para buscar cuenta por id o número
-    private Cuenta obtenerCuentaCriterios(Long id, String numeroCuenta) {
+    /**
+     * Método privado para buscar cuenta por id o número
+     * @param id
+     * @param numeroCuenta
+     * @return Cuenta
+     */
+    public Cuenta obtenerCuentaCriterios(Long id, String numeroCuenta) {
 
         if (id == null && numeroCuenta == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Debe proporcionar al menos un criterio de búsqueda");
