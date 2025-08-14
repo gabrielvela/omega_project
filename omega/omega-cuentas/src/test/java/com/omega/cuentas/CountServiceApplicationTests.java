@@ -13,6 +13,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -25,33 +26,33 @@ class CountServiceApplicationTests {
     @Autowired
     private CuentaRepository cuentaRepository;
 
+    @Test
     @Transactional
     @Rollback
-    @Test
     void noDebePermitirMovimientoSiCuentaInactiva() {
-        // Crear y guardar la cuenta inactiva
+        // Arrange: crear cuenta inactiva
         Cuenta cuenta = new Cuenta();
         cuenta.setNumeroCuenta("123456");
         cuenta.setTipoCuenta(TipoCuenta.AHORROS);
         cuenta.setSaldoInicial(new BigDecimal("100.00"));
         cuenta.setSaldoDisponible(cuenta.getSaldoInicial());
-        cuenta.setEstado(false);
+        cuenta.setEstado(false); // cuenta inactiva
         cuenta.setClienteId(1L);
 
-        cuenta = cuentaRepository.save(cuenta); // ahora tiene ID
+        cuenta = cuentaRepository.save(cuenta);
 
-        // Ejecutar y validar
-        Long cuentaId = cuenta.getId();
-        String numeroCuenta = cuenta.getNumeroCuenta();
-
+        // Act: preparar DTO de movimiento
         MovimientoRequestDTO mov = new MovimientoRequestDTO();
-        mov.setIdCuenta(cuentaId);
-        mov.setNumeroCuenta(numeroCuenta);
+        mov.setIdCuenta(cuenta.getId());
+        mov.setNumeroCuenta(cuenta.getNumeroCuenta());
         mov.setTipoMovimiento(TipoMovimiento.RETIRO);
         mov.setValor(new BigDecimal("12.50"));
 
-        assertThrows(IllegalStateException.class, () -> {
+        // Assert: debe lanzar IllegalStateException
+        IllegalStateException ex = assertThrows(IllegalStateException.class, () -> {
             servicio.registrarMovimiento(mov);
         });
+
+        assertEquals("La cuenta no está activa para realizar operaciones.", ex.getMessage());
     }
 }
