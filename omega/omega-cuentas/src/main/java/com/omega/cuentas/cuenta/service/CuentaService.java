@@ -95,7 +95,7 @@ public class CuentaService {
 
     public CuentaDTO actualizarCuenta(Long cuentaId, String numeroCuenta, CuentaUpdateDTO dto) {
 
-        Cuenta cuenta = buscarCuenta(cuentaId, numeroCuenta);
+        Cuenta cuenta = obtenerCuentaCriterios(cuentaId, numeroCuenta);
 
         cuenta.setTipoCuenta(dto.getTipoCuenta());
         cuenta.setEstado(dto.getEstado());
@@ -107,7 +107,7 @@ public class CuentaService {
     }
 
     // 🔍 Método privado para buscar cuenta por id o número
-    private Cuenta buscarCuenta(Long id, String numeroCuenta) {
+    public Cuenta obtenerCuentaCriterios(Long id, String numeroCuenta) {
 
         if (id == null && numeroCuenta == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Debe proporcionar al menos un criterio de búsqueda");
@@ -125,8 +125,13 @@ public class CuentaService {
         }
     }
 
+    public CuentaDTO buscarCuenta(Long id, String numeroCuenta) {
+        Cuenta cuenta = obtenerCuentaCriterios(id, numeroCuenta);
+        return new CuentaDTO(cuenta);
+    }
+
     public CuentaDTO actualizarParcialmente(Long id, String numeroCuenta, Map<String, Object> campos) {
-        Cuenta cuenta = buscarCuenta(id, numeroCuenta);
+        Cuenta cuenta = obtenerCuentaCriterios(id, numeroCuenta);
 
         campos.forEach((clave, valor) -> {
             Field campo = ReflectionUtils.findField(Cuenta.class, clave);
@@ -141,7 +146,7 @@ public class CuentaService {
     }
 
     public void eliminarCuenta(Long id, String numeroCuenta) {
-        Cuenta cuenta = buscarCuenta(id, numeroCuenta);
+        Cuenta cuenta = obtenerCuentaCriterios(id, numeroCuenta);
         cuentaRepository.delete(cuenta);
     }
 

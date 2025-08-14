@@ -31,16 +31,19 @@ public class CuentaController {
         return ResponseEntity.ok(cuentas);
     }
 
-//    @PostMapping("/crear")
-//    public ResponseEntity<CuentaCreateDTO> crearCuenta(@Valid @RequestBody CuentaCreateDTO dto) {
-//        CuentaCreateDTO creada = cuentaService.crearCuenta(dto);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(creada);
-//    }
-
     @PostMapping("/crear")
     public ResponseEntity<Cuenta> crearCuenta(@RequestBody CuentaCreateDTO dto) {
         Cuenta cuenta = cuentaService.crearCuenta(dto);
         return ResponseEntity.ok(cuenta);
+    }
+    
+    @GetMapping("/buscar")
+    public ResponseEntity<CuentaDTO> buscarCuenta(
+            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) String numeroCuenta) {
+
+        CuentaDTO cuentaDTO = cuentaService.buscarCuenta(id, numeroCuenta);
+        return ResponseEntity.ok(cuentaDTO);
     }
 
     @PutMapping("/actualizar")
