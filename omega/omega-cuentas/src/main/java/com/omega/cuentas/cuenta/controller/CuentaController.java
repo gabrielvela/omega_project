@@ -2,14 +2,11 @@ package com.omega.cuentas.cuenta.controller;
 
 import com.omega.cuentas.cuenta.dto.CuentaCreateDTO;
 import com.omega.cuentas.cuenta.dto.CuentaDTO;
-import com.omega.cuentas.cuenta.dto.CuentaResponseDTO;
 import com.omega.cuentas.cuenta.dto.CuentaUpdateDTO;
 import com.omega.cuentas.cuenta.model.Cuenta;
 import com.omega.cuentas.cuenta.service.CuentaService;
-import com.omega.cuentas.integration.exception.ClienteNoEncontradoException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

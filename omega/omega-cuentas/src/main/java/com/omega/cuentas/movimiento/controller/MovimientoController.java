@@ -28,27 +28,12 @@ public class MovimientoController {
         return ResponseEntity.ok(movimientos);
     }
 
-//    @PostMapping
-//    public ResponseEntity<?> registrar(@RequestBody MovimientoDTO movimientoDTO) {
-//        try {
-//            Movimiento nuevo = movimientoService.registrarMovimientoConNumeroCuenta(
-//                    movimientoDTO.getCuentaId(),
-//                    movimientoDTO.getTipo(),
-//                    movimientoDTO.getValor()
-//            );
-//            return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
-//        } catch (SaldoInsuficienteException e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-//        } catch (CuentaInexistenteException e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-//        }
-//    }
-    @PostMapping
-    public ResponseEntity<?> registrarConNumeroCuenta(@RequestBody MovimientoRequestDTO movimientoDTO) {
+    @PostMapping("crear")
+    public ResponseEntity<?> registrarMovimiento(@RequestBody MovimientoRequestDTO movimientoDTO) {
         try {
-            Movimiento nuevo = movimientoService.registrarMovimientoConNumeroCuenta(
+            Movimiento nuevo = movimientoService.registrarMovimiento(
                     movimientoDTO.getNumeroCuenta(),
-                    movimientoDTO.getTipo(),
+                    movimientoDTO.getTipoMovimiento(),
                     movimientoDTO.getValor()
             );
             MovimientoDTO respuesta = new MovimientoDTO(nuevo);

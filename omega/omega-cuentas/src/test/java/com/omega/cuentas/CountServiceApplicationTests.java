@@ -44,7 +44,7 @@ class CountServiceApplicationTests {
                 String numeroCuenta=cuenta.getNumeroCuenta();
 
 		assertThrows(IllegalStateException.class, () -> {
-			servicio.registrarMovimientoConNumeroCuenta(numeroCuenta, TipoMovimiento.RETIRO, new BigDecimal("12.50"));
+			servicio.registrarMovimiento(numeroCuenta, TipoMovimiento.RETIRO, new BigDecimal("12.50"));
 		});
 	}
 }

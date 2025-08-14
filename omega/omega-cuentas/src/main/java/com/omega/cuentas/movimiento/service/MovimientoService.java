@@ -78,7 +78,7 @@ public class MovimientoService {
     private Date fechaTruncada;
 
     @Transactional
-    public Movimiento registrarMovimientoConNumeroCuenta(String numeroCuenta, TipoMovimiento tipo, BigDecimal valor) throws SaldoInsuficienteException, CuentaInexistenteException {
+    public Movimiento registrarMovimiento(String numeroCuenta, TipoMovimiento tipo, BigDecimal valor) throws SaldoInsuficienteException, CuentaInexistenteException {
         Cuenta cuenta;
         cuenta = cuentaRepository.findByNumeroCuenta(numeroCuenta)
                 .orElseThrow(() -> new CuentaInexistenteException("Cuenta no encontrada"));
@@ -116,14 +116,6 @@ public class MovimientoService {
             throw new SaldoInsuficienteException("Saldo no disponible");
         }
 
-//        BigDecimal absValor = valor.abs();
-//        if (tipo == TipoMovimiento.RETIRO) {
-//            nuevoSaldo = cuenta.getSaldoDisponible().subtract(absValor);
-//            valor = absValor.multiply(new BigDecimal("-1"));
-//        } else {
-//            nuevoSaldo = cuenta.getSaldoDisponible().add(valor);
-//            valor = absValor;
-//        }
         Movimiento movimiento = new Movimiento(null, new Date(), tipo, valor, nuevoSaldo, cuenta);
 
         cuenta.setSaldoDisponible(nuevoSaldo);
