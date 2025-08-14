@@ -2,13 +2,12 @@ package com.omega.cuentas.cuenta.service;
 
 import com.omega.cuentas.cuenta.dto.CuentaDTO;
 import com.omega.cuentas.cuenta.dto.CuentaCreateDTO;
-import com.omega.cuentas.cuenta.dto.CuentaResponseDTO;
 import com.omega.cuentas.cuenta.dto.CuentaUpdateDTO;
 import com.omega.cuentas.cuenta.model.Cuenta;
 import com.omega.cuentas.cuenta.repository.CuentaRepository;
 import com.omega.cuentas.integration.dto.Cliente;
 import com.omega.cuentas.integration.validator.ClienteValidatorService;
-import jakarta.transaction.Transactional;
+import com.omega.cuentas.movimiento.repository.MovimientoRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
@@ -18,10 +17,8 @@ import java.lang.reflect.Field;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
@@ -33,6 +30,9 @@ public class CuentaService {
 
     @Autowired
     private ClienteValidatorService clienteValidatorService;
+
+    @Autowired
+    private MovimientoRepository movimientoRepository;
 
 //    public CuentaService(CuentaRepository cuentaRepository, ClienteValidatorService clienteValidatorService) {
 //        this.cuentaRepository = cuentaRepository;
@@ -159,6 +159,11 @@ public class CuentaService {
 
     public void eliminarCuenta(Long id, String numeroCuenta) {
         Cuenta cuenta = obtenerCuentaCriterios(id, numeroCuenta);
+        
+        if (movimientoRepository.existsByCuentaId(cuenta.getId())) {
+            throw new IllegalStateException("No se puede eliminar la cuenta porque tiene movimientos asociados.");
+        }
+
         cuentaRepository.delete(cuenta);
     }
 
