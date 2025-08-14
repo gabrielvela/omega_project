@@ -52,8 +52,8 @@ public class CuentaCreacionTest {
         cuentaRequest.setSaldoInicial(new BigDecimal("1000.0"));
         cuentaRequest.setCliente(cliente); // ✅ si usas Cliente como objeto
 
-        CuentaCreateDTO  cuentaCreadaDTO = cuentaService.crearCuenta(cuentaRequest);
-        Assertions.assertNotNull(cuentaCreadaDTO, "La cuenta creada no debe ser nula");
+        Cuenta  cuenta = cuentaService.crearCuenta(cuentaRequest);
+        Assertions.assertNotNull(cuenta, "La cuenta creada no debe ser nula");
 
         // Paso 3: Validar que la cuenta fue creada en la base
         Optional<Cuenta> cuentaCreada = cuentaRepository.findByNumeroCuenta("585545");

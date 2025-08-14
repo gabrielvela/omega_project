@@ -94,20 +94,18 @@ public class CuentaService {
     }
 
     public CuentaDTO actualizarCuenta(Long cuentaId, String numeroCuenta, CuentaUpdateDTO dto) {
-
         Cuenta cuenta = obtenerCuentaCriterios(cuentaId, numeroCuenta);
 
         cuenta.setTipoCuenta(dto.getTipoCuenta());
         cuenta.setEstado(dto.getEstado());
-        cuenta.setSaldoInicial(dto.getSaldoInicial());
-        cuenta.setSaldoDisponible(dto.getSaldoDisponible());
+        cuenta.setNumeroCuenta(dto.getNumeroCuenta());
 
         Cuenta actualizada = cuentaRepository.save(cuenta);
         return new CuentaDTO(actualizada);
     }
 
     // 🔍 Método privado para buscar cuenta por id o número
-    public Cuenta obtenerCuentaCriterios(Long id, String numeroCuenta) {
+    private Cuenta obtenerCuentaCriterios(Long id, String numeroCuenta) {
 
         if (id == null && numeroCuenta == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Debe proporcionar al menos un criterio de búsqueda");

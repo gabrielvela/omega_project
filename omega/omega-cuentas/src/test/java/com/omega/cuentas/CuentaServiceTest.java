@@ -45,10 +45,10 @@ class CuentaServiceTest {
         cuentaDTO.setSaldoInicial(BigDecimal.valueOf(5000));
         cuentaDTO.setCliente(new Cliente(clienteId)); // o clienteDTO si tu DTO lo requiere
 
-        CuentaCreateDTO cuentaGuardada = cuentaService.crearCuenta(cuentaDTO);
+        Cuenta cuentaGuardada = cuentaService.crearCuenta(cuentaDTO);
 
-        assertNotNull(cuentaGuardada.getCuenta().getId());
-        assertEquals(clienteId, cuentaGuardada.getCuenta().getClienteId());
+        assertNotNull(cuentaGuardada.getId());
+        assertEquals(clienteId, cuentaGuardada.getClienteId());
     }
 
     @Test
