@@ -2,6 +2,7 @@ package com.omega.cuentas.reporte.service;
 
 import com.omega.cuentas.cuenta.model.Cuenta;
 import com.omega.cuentas.cuenta.repository.CuentaRepository;
+import com.omega.cuentas.integration.dto.Cliente;
 import com.omega.cuentas.integration.validator.ClienteValidatorService;
 import com.omega.cuentas.movimiento.dto.MovimientoDTO;
 import com.omega.cuentas.movimiento.model.Movimiento;
@@ -17,7 +18,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class ReporteService {
@@ -139,13 +142,15 @@ public class ReporteService {
     }
 
     @Transactional(readOnly = true)
-    public List<EstadoCuentaDTO> generarEstadoCuentaAgrupado(String nombreCliente, LocalDate fechaInicio, LocalDate fechaFin) {
-        Long clienteId = clienteValidator.obtenerClienteIdPorNombre(nombreCliente);
+    public List<EstadoCuentaDTO> generarEstadoCuentaAgrupado(String nombreCliente, Long idCliente, String identificacion,
+            LocalDate fechaInicio, LocalDate fechaFin) {
+
+        Cliente cli = resolverClienteId(nombreCliente, idCliente, identificacion);
 
         Date inicioDate = Date.from(fechaInicio.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Date finDate = Date.from(fechaFin.atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant());
 
-        List<Cuenta> cuentas = cuentaRepository.findByClienteId(clienteId);
+        List<Cuenta> cuentas = cuentaRepository.findByClienteId(cli.getClienteId());
         List<EstadoCuentaDTO> reporte = new ArrayList<>();
 
         for (Cuenta cuenta : cuentas) {
@@ -157,7 +162,7 @@ public class ReporteService {
             }
 
             EstadoCuentaDTO dto = new EstadoCuentaDTO();
-            dto.setCliente(nombreCliente);
+            dto.setNombreCliente(cli.getNombre());
             dto.setNumeroCuenta(cuenta.getNumeroCuenta());
             dto.setTipoCuenta(cuenta.getTipoCuenta());
             dto.setSaldoInicial(cuenta.getSaldoInicial());
@@ -173,6 +178,22 @@ public class ReporteService {
         }
 
         return reporte;
+    }
+
+    private Cliente resolverClienteId(String nombreCliente, Long clienteId, String identificacionCliente) {
+        if (clienteId == null && identificacionCliente == null && nombreCliente == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Debe proporcionar id, identificación o nombre al criterio de búsqueda de cliente");
+        }
+
+        if (clienteId != null) {
+            return clienteValidator.obtenerClientePorId(clienteId);
+        } else if (identificacionCliente != null) {
+            return clienteValidator.obtenerClientePorIdentificacion(identificacionCliente);
+        } else if (nombreCliente != null) {
+            return clienteValidator.obtenerClientePorNombre(nombreCliente);
+        } else {
+            throw new IllegalArgumentException("Debe proporcionar un criterio de búsqueda");
+        }
     }
 
 }

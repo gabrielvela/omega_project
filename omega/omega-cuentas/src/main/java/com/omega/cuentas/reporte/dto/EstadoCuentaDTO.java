@@ -17,7 +17,7 @@ import lombok.Data;
  */
 @Data
 public class EstadoCuentaDTO {
-    private String cliente;
+    private String nombreCliente;
     private String numeroCuenta;
     private TipoCuenta tipoCuenta;
     private BigDecimal saldoInicial;

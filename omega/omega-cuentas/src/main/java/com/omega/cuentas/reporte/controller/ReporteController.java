@@ -24,7 +24,7 @@ public class ReporteController {
     }
 
 //    @GetMapping()
-//    public ResponseEntity<List<MovimientoReporteDTO>> obtenerEstadoCuenta(
+//    public ResponseEntity<List<MovimientoReporteDTO>> obtenerEstadoCuentaPorId(
 //            @RequestParam Long clienteId,
 //            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
 //            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
@@ -34,7 +34,9 @@ public class ReporteController {
 //    }
     @GetMapping
     public ResponseEntity<List<MovimientoReporteDTO>> obtenerEstadoCuentaPorNombre(
-            @RequestParam String nombreCliente,
+            @RequestParam(required = false) String nombreCliente,
+            @RequestParam(required = false) Long idCliente,
+            @RequestParam(required = false) String identificacion,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
 
@@ -44,11 +46,13 @@ public class ReporteController {
 
     @GetMapping("/estado-cuenta")
     public ResponseEntity<List<EstadoCuentaDTO>> obtenerEstadoCuentaAgrupado(
-            @RequestParam String nombreCliente,
+            @RequestParam(required = false) String nombreCliente,
+            @RequestParam(required = false) Long idCliente,
+            @RequestParam(required = false) String identificacion,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
 
-        List<EstadoCuentaDTO> reporte = reporteService.generarEstadoCuentaAgrupado(nombreCliente, fechaInicio, fechaFin);
+        List<EstadoCuentaDTO> reporte = reporteService.generarEstadoCuentaAgrupado(nombreCliente, idCliente, identificacion, fechaInicio, fechaFin);
         return ResponseEntity.ok(reporte);
     }
 
