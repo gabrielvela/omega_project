@@ -19,6 +19,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,10 +129,23 @@ public class CuentaService {
         return new CuentaDTO(cuenta);
     }
 
+    private static final Set<String> CAMPOS_NO_ACTUALIZABLES = Set.of(
+            "id",
+            "saldoInicial",
+            "saldoDisponible",
+            "clienteId",
+            "cliente"
+    );
+
     public CuentaDTO actualizarParcialmente(Long id, String numeroCuenta, Map<String, Object> campos) {
         Cuenta cuenta = obtenerCuentaCriterios(id, numeroCuenta);
 
         campos.forEach((clave, valor) -> {
+            if (CAMPOS_NO_ACTUALIZABLES.contains(clave)) {
+                // Puedes loguear o ignorar silenciosamente
+                return;
+            }
+
             Field campo = ReflectionUtils.findField(Cuenta.class, clave);
             if (campo != null) {
                 campo.setAccessible(true);
