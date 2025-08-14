@@ -18,6 +18,10 @@ public class MovimientoDTO {
     private BigDecimal saldo;
     private String numeroCuenta;
 
+    public MovimientoDTO() {
+        
+    }
+
     public MovimientoDTO(Movimiento movimiento) {
         this.id = movimiento.getId();
         this.fecha = movimiento.getFecha().toInstant()

@@ -42,34 +42,30 @@ public class MovimientoController {
         return ResponseEntity.ok(movimientoDto);
     }
 
-    // Actualizar movimiento (si aplica en tu lógica)
-    @PutMapping("/{id}")
-    public ResponseEntity<?> actualizarPorIdMovimiento(@PathVariable Long id, @RequestBody @Valid MovimientoDTO movimientoDTO) {
-        try {
-            Movimiento actualizado = movimientoService.actualizarMovimiento(
-                    id,
-                    movimientoDTO.getTipoMovimiento(),
-                    movimientoDTO.getValor()
-            );
-            return ResponseEntity.ok(actualizado);
-        } catch (SaldoInsuficienteException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (CuentaInexistenteException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-        }
-    }
+    //Actualizar movimiento se encuentra funcional, sin embargo,
+    //de acuerdo a mi lógica no debe existir este método o talvez debe crear otro movimiento que revierta el movimiento que se va a modificar
+    /*@PutMapping("/actualizar")
+    public ResponseEntity<MovimientoDTO> actualizarMovimiento(
+            @RequestParam Long id,
+            @RequestBody @Valid MovimientoDTO dto) {
 
-    // Eliminar movimiento por ID
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminar(@PathVariable Long id) {
+        Movimiento actualizado = movimientoService.actualizarMovimiento(id, dto);
+        MovimientoDTO respuesta = new MovimientoDTO(actualizado);
+        return ResponseEntity.ok(respuesta);
+    }*/
+    
+    
+    //Eliminar movimiento se encuentra funcional, sin embargo,
+    //de acuerdo a mi lógica no debe existir este método o talvez debe crear otro movimiento que revierta el movimiento que se va a modificar
+    /*@DeleteMapping("/eliminar")
+    public ResponseEntity<?> eliminar(
+            @RequestParam(required = false) Long id) {
         boolean eliminado = movimientoService.eliminarMovimiento(id);
         if (eliminado) {
             return ResponseEntity.ok("Movimiento eliminado correctamente");
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Movimiento no encontrado");
         }
-    }
+    }*/
 
 }

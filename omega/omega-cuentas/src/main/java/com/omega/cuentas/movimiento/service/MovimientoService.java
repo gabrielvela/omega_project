@@ -87,16 +87,10 @@ public class MovimientoService {
         if (dto.getTipoMovimiento() == TipoMovimiento.DEPOSITO && valor.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Valor debe ser positivo");
         }
-//        else {
-//            nuevoSaldo = cuenta.getSaldoDisponible().add(valor);
-//        }
 
         if (dto.getTipoMovimiento() == TipoMovimiento.RETIRO && valor.compareTo(BigDecimal.ZERO) > 0) {
             throw new IllegalArgumentException("Valor debe ser negativo");
         }
-//        else {
-//            nuevoSaldo = cuenta.getSaldoDisponible().add(valor);
-//        }
 
         BigDecimal nuevoSaldo = cuenta.getSaldoDisponible().add(valor);
 
@@ -120,9 +114,7 @@ public class MovimientoService {
     }
 
     @Transactional
-    public Movimiento actualizarMovimiento(Long id, TipoMovimiento tipo, BigDecimal valor)
-            throws SaldoInsuficienteException, CuentaInexistenteException {
-
+    public Movimiento actualizarMovimiento(Long id, MovimientoDTO dto) {
         Movimiento movimiento = movimientoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Movimiento no encontrado"));
 
@@ -133,33 +125,50 @@ public class MovimientoService {
             throw new IllegalStateException("La cuenta está inactiva");
         }
 
+//        if (dto.getValor() == null || dto.getValor().compareTo(BigDecimal.ZERO) <= 0) {
+//            throw new IllegalArgumentException("El valor debe ser mayor a cero");
+//        }
+
+        if (dto.getTipoMovimiento() == null) {
+            throw new IllegalArgumentException("El tipo de movimiento es obligatorio");
+        }
+
         // Validación de duplicado
+        // Truncar fecha para evitar duplicados
+        fechaActual = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
+        fechaTruncada = Date.from(fechaActual.atZone(ZoneId.systemDefault()).toInstant());
+
         if (movimientoRepository.existsByFechaAndTipoMovimientoAndValorAndCuenta(
-                movimiento.getFecha(), tipo, valor, cuenta)) {
+                fechaTruncada, dto.getTipoMovimiento(), dto.getValor(), cuenta)) {
             throw new IllegalArgumentException("Movimiento duplicado");
         }
 
-        // Validación de signo
-        if (tipo == TipoMovimiento.DEPOSITO && valor.compareTo(BigDecimal.ZERO) < 0) {
+        // Revertir el efecto del movimiento anterior
+        BigDecimal saldoActual = cuenta.getSaldoDisponible().subtract(movimiento.getValor());
+
+        // Normalizar nuevo valor
+        BigDecimal valor = dto.getValor();
+
+        if (valor.compareTo(BigDecimal.ZERO) == 0) {
+            throw new IllegalArgumentException("Valor no puede ser cero");
+        }
+
+        if (dto.getTipoMovimiento() == TipoMovimiento.DEPOSITO && valor.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Valor debe ser positivo");
         }
 
-        if (tipo == TipoMovimiento.RETIRO && valor.compareTo(BigDecimal.ZERO) > 0) {
+        if (dto.getTipoMovimiento() == TipoMovimiento.RETIRO && valor.compareTo(BigDecimal.ZERO) > 0) {
             throw new IllegalArgumentException("Valor debe ser negativo");
         }
 
-        // Revertir el saldo anterior
-        BigDecimal saldoActual = cuenta.getSaldoDisponible().subtract(movimiento.getValor());
-
-        // Aplicar el nuevo valor
         BigDecimal nuevoSaldo = saldoActual.add(valor);
 
-        if (tipo == TipoMovimiento.RETIRO && nuevoSaldo.compareTo(BigDecimal.ZERO) < 0) {
+        if (dto.getTipoMovimiento() == TipoMovimiento.RETIRO && nuevoSaldo.compareTo(BigDecimal.ZERO) < 0) {
             throw new SaldoInsuficienteException("Saldo no disponible");
         }
 
         // Actualizar movimiento
-        movimiento.setTipoMovimiento(tipo);
+        movimiento.setTipoMovimiento(dto.getTipoMovimiento());
         movimiento.setValor(valor);
         movimiento.setSaldo(nuevoSaldo);
 
