@@ -109,13 +109,15 @@ public class ReporteService {
     }
 
     @Transactional(readOnly = true)
-    public List<MovimientoReporteDTO> generarEstadoCuentaPorNombre(String nombreCliente, LocalDate fechaInicio, LocalDate fechaFin) {
-        Long clienteId = clienteValidator.obtenerClienteIdPorNombre(nombreCliente);
+    public List<MovimientoReporteDTO> generarEstadoCuentaPorNombre(Cliente clienteBuscado,
+            LocalDate fechaInicio, LocalDate fechaFin) {
+
+        Cliente cli = resolverClienteId(clienteBuscado);
 
         Date inicioDate = Date.from(fechaInicio.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Date finDate = Date.from(fechaFin.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
-        List<Cuenta> cuentas = cuentaRepository.findByClienteId(clienteId);
+        List<Cuenta> cuentas = cuentaRepository.findByClienteId(cli.getClienteId());
 
         List<MovimientoReporteDTO> reporte = new ArrayList<>();
 
@@ -126,7 +128,7 @@ public class ReporteService {
             for (Movimiento mov : movimientos) {
                 MovimientoReporteDTO dto = new MovimientoReporteDTO();
                 dto.setFecha(mov.getFecha());
-                dto.setCliente(nombreCliente);
+                dto.setCliente(cli.getNombre());
                 dto.setNumeroCuenta(cuenta.getNumeroCuenta());
                 dto.setTipoCuenta(cuenta.getTipoCuenta());
                 dto.setSaldoInicial(cuenta.getSaldoInicial());
@@ -142,10 +144,10 @@ public class ReporteService {
     }
 
     @Transactional(readOnly = true)
-    public List<EstadoCuentaDTO> generarEstadoCuentaAgrupado(String nombreCliente, Long idCliente, String identificacion,
+    public List<EstadoCuentaDTO> generarEstadoCuentaAgrupado(Cliente clienteBuscado,
             LocalDate fechaInicio, LocalDate fechaFin) {
 
-        Cliente cli = resolverClienteId(nombreCliente, idCliente, identificacion);
+        Cliente cli = resolverClienteId(clienteBuscado);
 
         Date inicioDate = Date.from(fechaInicio.atStartOfDay(ZoneId.systemDefault()).toInstant());
         Date finDate = Date.from(fechaFin.atTime(LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant());
@@ -180,17 +182,17 @@ public class ReporteService {
         return reporte;
     }
 
-    private Cliente resolverClienteId(String nombreCliente, Long clienteId, String identificacionCliente) {
-        if (clienteId == null && identificacionCliente == null && nombreCliente == null) {
+    private Cliente resolverClienteId(Cliente cli) {
+        if (cli.getClienteId() == null && cli.getIdentificacion() == null && cli.getNombre() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Debe proporcionar id, identificación o nombre al criterio de búsqueda de cliente");
         }
 
-        if (clienteId != null) {
-            return clienteValidator.obtenerClientePorId(clienteId);
-        } else if (identificacionCliente != null) {
-            return clienteValidator.obtenerClientePorIdentificacion(identificacionCliente);
-        } else if (nombreCliente != null) {
-            return clienteValidator.obtenerClientePorNombre(nombreCliente);
+        if (cli.getClienteId() != null) {
+            return clienteValidator.obtenerClientePorId(cli.getClienteId());
+        } else if (cli.getIdentificacion() != null) {
+            return clienteValidator.obtenerClientePorIdentificacion(cli.getIdentificacion());
+        } else if (cli.getNombre() != null) {
+            return clienteValidator.obtenerClientePorNombre(cli.getNombre());
         } else {
             throw new IllegalArgumentException("Debe proporcionar un criterio de búsqueda");
         }

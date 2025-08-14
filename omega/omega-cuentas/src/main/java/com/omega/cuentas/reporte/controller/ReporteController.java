@@ -1,5 +1,6 @@
 package com.omega.cuentas.reporte.controller;
 
+import com.omega.cuentas.integration.dto.Cliente;
 import com.omega.cuentas.reporte.dto.EstadoCuentaDTO;
 import com.omega.cuentas.reporte.dto.MovimientoReporteDTO;
 import com.omega.cuentas.reporte.service.ReporteService;
@@ -22,37 +23,32 @@ public class ReporteController {
     public ReporteController(ReporteService reporteService) {
         this.reporteService = reporteService;
     }
-
-//    @GetMapping()
-//    public ResponseEntity<List<MovimientoReporteDTO>> obtenerEstadoCuentaPorId(
-//            @RequestParam Long clienteId,
-//            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
-//            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
-//
-//        List<MovimientoReporteDTO> reporte = reporteService.generarEstadoCuenta(clienteId, fechaInicio, fechaFin);
-//        return ResponseEntity.ok(reporte);
-//    }
+    
     @GetMapping
-    public ResponseEntity<List<MovimientoReporteDTO>> obtenerEstadoCuentaPorNombre(
-            @RequestParam(required = false) String nombreCliente,
-            @RequestParam(required = false) Long idCliente,
+    public ResponseEntity<List<MovimientoReporteDTO>> obtenerEstadoCuenta1(
+            @RequestParam(required = false) String nombre,
+            @RequestParam(required = false) Long clienteId,
             @RequestParam(required = false) String identificacion,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
+        
+        Cliente cli = new Cliente(clienteId, nombre, identificacion);
 
-        List<MovimientoReporteDTO> reporte = reporteService.generarEstadoCuentaPorNombre(nombreCliente, fechaInicio, fechaFin);
+        List<MovimientoReporteDTO> reporte = reporteService.generarEstadoCuentaPorNombre(cli, fechaInicio, fechaFin);
         return ResponseEntity.ok(reporte);
     }
 
     @GetMapping("/estado-cuenta")
     public ResponseEntity<List<EstadoCuentaDTO>> obtenerEstadoCuentaAgrupado(
-            @RequestParam(required = false) String nombreCliente,
-            @RequestParam(required = false) Long idCliente,
+            @RequestParam(required = false) String nombre,
+            @RequestParam(required = false) Long clienteId,
             @RequestParam(required = false) String identificacion,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
+        
+        Cliente cli = new Cliente(clienteId, nombre, identificacion);
 
-        List<EstadoCuentaDTO> reporte = reporteService.generarEstadoCuentaAgrupado(nombreCliente, idCliente, identificacion, fechaInicio, fechaFin);
+        List<EstadoCuentaDTO> reporte = reporteService.generarEstadoCuentaAgrupado(cli, fechaInicio, fechaFin);
         return ResponseEntity.ok(reporte);
     }
 

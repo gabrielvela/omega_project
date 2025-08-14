@@ -24,4 +24,10 @@ public class Cliente {
         this.clienteId = clienteId;
     }
 
+    public Cliente(Long clienteId, String nombre, String identificacion) {
+        this.clienteId = clienteId;
+        this.nombre = nombre;
+        this.identificacion = identificacion;
+    }
+
 }
