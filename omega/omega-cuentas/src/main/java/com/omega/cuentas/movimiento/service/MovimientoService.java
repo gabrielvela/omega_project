@@ -2,6 +2,7 @@ package com.omega.cuentas.movimiento.service;
 
 import com.omega.cuentas.cuenta.model.Cuenta;
 import com.omega.cuentas.cuenta.repository.CuentaRepository;
+import com.omega.cuentas.movimiento.dto.MovimientoDTO;
 import com.omega.cuentas.movimiento.model.Movimiento;
 import com.omega.cuentas.movimiento.model.TipoMovimiento;
 import com.omega.cuentas.movimiento.repository.MovimientoRepository;
@@ -10,9 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class MovimientoService {
@@ -27,8 +32,11 @@ public class MovimientoService {
         this.movimientoRepository = movimientoRepository;
     }
 
-    public List<Movimiento> listarMovimientos() {
-        return movimientoRepository.findAll();
+    public List<MovimientoDTO> obtenerTodos() {
+        return movimientoRepository.findAll()
+                .stream()
+                .map(MovimientoDTO::new)
+                .collect(Collectors.toList());
     }
 
     //
@@ -66,6 +74,9 @@ public class MovimientoService {
 //        
 //        return movimientoRepository.save(movimiento);
 //    }
+    private LocalDateTime fechaActual;
+    private Date fechaTruncada;
+
     @Transactional
     public Movimiento registrarMovimientoConNumeroCuenta(String numeroCuenta, TipoMovimiento tipo, BigDecimal valor) throws SaldoInsuficienteException, CuentaInexistenteException {
         Cuenta cuenta;
@@ -78,8 +89,11 @@ public class MovimientoService {
         }
 
         // Validación de movimiento duplicado
+        fechaActual = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
+        fechaTruncada = Date.from(fechaActual.atZone(ZoneId.systemDefault()).toInstant());
+
         if (movimientoRepository.existsByFechaAndTipoMovimientoAndValorAndCuenta(
-                new Date(), tipo, valor, cuenta)) {
+                fechaTruncada, tipo, valor, cuenta)) {
             throw new IllegalArgumentException("Movimiento duplicado");
         }
 
@@ -212,7 +226,7 @@ public class MovimientoService {
         if (movimientoOpt.isPresent()) {
             Movimiento movimiento = movimientoOpt.get();
             Cuenta cuenta = cuentaRepository.findByNumeroCuenta(movimiento.getCuenta().getNumeroCuenta())
-                .orElseThrow(() -> new CuentaInexistenteException("Cuenta no encontrada"));
+                    .orElseThrow(() -> new CuentaInexistenteException("Cuenta no encontrada"));
 
             // Revertir el efecto del movimiento en el saldo
             if (movimiento.getTipoMovimiento() == TipoMovimiento.DEPOSITO) {

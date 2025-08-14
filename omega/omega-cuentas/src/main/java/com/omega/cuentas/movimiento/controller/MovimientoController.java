@@ -15,29 +15,18 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/movimientos")
+@RequestMapping("/api/movimientos")
 public class MovimientoController {
 
     @Autowired
     private MovimientoService movimientoService;
 
-//    public MovimientoController(MovimientoService movimientoService) {
-//        this.movimientoService = movimientoService;
-//    }
-    
-    
     // Obtener todos los movimientos
     @GetMapping
-    public ResponseEntity<List<Movimiento>> listarTodos() {
-        List<Movimiento> movimientos = movimientoService.listarMovimientos();
+    public ResponseEntity<List<MovimientoDTO>> listarTodos() {
+        List<MovimientoDTO> movimientos = movimientoService.obtenerTodos();
         return ResponseEntity.ok(movimientos);
     }
-    
-//        @PostMapping
-//    public ResponseEntity<Void> registrar(@RequestBody MovimientoRequestDTO dto) {
-//        movimientoService.registrarPorNumeroCuenta(dto);
-//        return ResponseEntity.status(HttpStatus.CREATED).build();
-//    }
 
 //    @PostMapping
 //    public ResponseEntity<?> registrar(@RequestBody MovimientoDTO movimientoDTO) {
@@ -62,7 +51,9 @@ public class MovimientoController {
                     movimientoDTO.getTipo(),
                     movimientoDTO.getValor()
             );
-            return ResponseEntity.status(HttpStatus.CREATED).body(nuevo);
+            MovimientoDTO respuesta = new MovimientoDTO(nuevo);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
         } catch (SaldoInsuficienteException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (CuentaInexistenteException e) {
@@ -80,14 +71,14 @@ public class MovimientoController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Movimiento no encontrado");
         }
     }
-    
-        // Actualizar movimiento (si aplica en tu lógica)
+
+    // Actualizar movimiento (si aplica en tu lógica)
     @PutMapping("/{id}")
     public ResponseEntity<?> actualizarPorIdMovimiento(@PathVariable Long id, @RequestBody @Valid MovimientoDTO movimientoDTO) {
         try {
             Movimiento actualizado = movimientoService.actualizarMovimiento(
                     id,
-                    movimientoDTO.getTipo(),
+                    movimientoDTO.getTipoMovimiento(),
                     movimientoDTO.getValor()
             );
             return ResponseEntity.ok(actualizado);
@@ -110,7 +101,5 @@ public class MovimientoController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Movimiento no encontrado");
         }
     }
-
-
 
 }
