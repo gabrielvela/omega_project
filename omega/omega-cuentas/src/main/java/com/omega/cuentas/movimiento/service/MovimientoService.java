@@ -23,6 +23,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class MovimientoService {
@@ -109,8 +112,11 @@ public class MovimientoService {
         return movimientoRepository.save(movimiento);
     }
 
-    public Movimiento obtenerPorId(Long id) {
-        return movimientoRepository.findById(id).orElse(null);
+    public MovimientoDTO obtenerPorId(Long id) {
+        Movimiento mov = movimientoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Movimiento con ID " + id + " no encontrado"));
+
+        return new MovimientoDTO(mov);
     }
 
     @Transactional

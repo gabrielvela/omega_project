@@ -36,14 +36,10 @@ public class MovimientoController {
     }
 
     // Obtener movimiento por ID
-    @GetMapping("/{id}")
-    public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
-        Movimiento movimiento = movimientoService.obtenerPorId(id);
-        if (movimiento != null) {
-            return ResponseEntity.ok(movimiento);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Movimiento no encontrado");
-        }
+    @GetMapping("/buscar")
+    public ResponseEntity<MovimientoDTO> buscarMovimiento(@RequestParam(required = false) Long id) {
+        MovimientoDTO movimientoDto = movimientoService.obtenerPorId(id);
+        return ResponseEntity.ok(movimientoDto);
     }
 
     // Actualizar movimiento (si aplica en tu lógica)
