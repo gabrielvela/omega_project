@@ -1,0 +1,264 @@
+{
+	"info": {
+		"_postman_id": "6546d4ca-e560-4398-aff6-24891e09e9f7",
+		"name": "omega-clientes",
+		"description": "Permite consultar los endpoints para cliente",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "47369765",
+		"_collection_link": "https://supergabicho-482111.postman.co/workspace/Gabriel-Vela-(Gabu)'s-Workspace~e6940171-06b3-4e13-81b9-7e5d01cfaa91/collection/47369765-6546d4ca-e560-4398-aff6-24891e09e9f7?action=share&source=collection_link&creator=47369765"
+	},
+	"item": [
+		{
+			"name": "list_cliente",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "gabriel",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "gabriel",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/clientes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"clientes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "crear_cliente",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "gabriel",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "gabriel",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nombre\": \"Jose Lema\",\r\n    \"genero\": \"Masculino\",\r\n    \"edad\": 40,\r\n    \"identificacion\": \"1701234567\",\r\n    \"direccion\": \"Otavalo sn y principal\",\r\n    \"telefono\": \"098254785\",\r\n    \"contrasenia\": \"1234\",\r\n    \"estado\": true\r\n}\r\n/*{\r\n  \"nombre\": \"Marianela Montalvo\",\r\n  \"genero\": \"Masculino\",\r\n  \"edad\": 55,\r\n  \"identificacion\": \"1701234568\",\r\n  \"direccion\": \"Amazonas y NNUU\",\r\n  \"telefono\": \"097548965\",\r\n  \"contrasenia\": \"5678\",\r\n  \"estado\": true\r\n}*/\r\n/*{\r\n  \"nombre\": \"Juan Osorio\",\r\n  \"genero\": \"Masculino\",\r\n  \"edad\": 35,\r\n  \"identificacion\": \"1701234569\",\r\n  \"direccion\": \"13 junio y Equinoccial\",\r\n  \"telefono\": \"098874587\",\r\n  \"contrasenia\": \"1245\",\r\n  \"estado\": true\r\n}*/",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/clientes/crear",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"clientes",
+						"crear"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "buscar_cliente",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "gabriel",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "gabriel",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/clientes/buscar?identificacion=1701234567",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"clientes",
+						"buscar"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "identificacion",
+							"value": "1701234567"
+						},
+						{
+							"key": "nombre",
+							"value": "Jose Lema",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update_cliente",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"nombre\": \"Jose Lema\",  \r\n  \"identificacion\": \"1701234567\",//AL ACTUALIZAR SE VERIFICA EXISTENCIA POR SER UNIQUE\r\n  \"direccion\": \"Cumbayá\",\r\n  \"telefono\": \"0997654321\",\r\n  \"estado\": false,\r\n  \"genero\": \"Masculino\",\r\n  \"edad\": 36,\r\n  \"contrasenia\": \"nuevaClave\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/clientes/actualizar?identificacion=1701234567",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"clientes",
+						"actualizar"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "identificacion",
+							"value": "1701234567"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "parcial_update_cliente",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"identificacion\": \"1701234567\",\r\n    \"direccion\": \"Avenida Siempre Viva 123\",\r\n    \"telefono\": \"0900000000\",\r\n    \"estado\": false\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/clientes/actualizar-parcial?identificacion=1701234567",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"clientes",
+						"actualizar-parcial"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "identificacion",
+							"value": "1701234567"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete_cliente",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/clientes/eliminar?identificacion=1701234567",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"clientes",
+						"eliminar"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "identificacion",
+							"value": "1701234567"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

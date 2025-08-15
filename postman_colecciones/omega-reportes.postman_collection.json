@@ -1,0 +1,99 @@
+{
+	"info": {
+		"_postman_id": "94b8dfd9-5a7d-44e1-86fe-0b4d2f955c24",
+		"name": "omega-reportes",
+		"description": "Permite consultar los endpoints para reportes",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "47369765",
+		"_collection_link": "https://supergabicho-482111.postman.co/workspace/Gabriel-Vela-(Gabu)'s-Workspace~e6940171-06b3-4e13-81b9-7e5d01cfaa91/collection/47369765-94b8dfd9-5a7d-44e1-86fe-0b4d2f955c24?action=share&source=collection_link&creator=47369765"
+	},
+	"item": [
+		{
+			"name": "reporte1",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/reportes?identificacion=1701234567&fechaInicio=2025-02-08&fechaFin=2025-12-31",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"reportes"
+					],
+					"query": [
+						{
+							"key": "clienteId",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "nombre",
+							"value": "Jose%20Lema",
+							"disabled": true
+						},
+						{
+							"key": "identificacion",
+							"value": "1701234567"
+						},
+						{
+							"key": "fechaInicio",
+							"value": "2025-02-08"
+						},
+						{
+							"key": "fechaFin",
+							"value": "2025-12-31"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "reporte_agrupado",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/reportes/estado-cuenta?nombre=Jose Lema&fechaInicio=2025-02-08&fechaFin=2025-12-31",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"reportes",
+						"estado-cuenta"
+					],
+					"query": [
+						{
+							"key": "clienteId",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "identificacion",
+							"value": "1701234567",
+							"disabled": true
+						},
+						{
+							"key": "nombre",
+							"value": "Jose Lema"
+						},
+						{
+							"key": "fechaInicio",
+							"value": "2025-02-08"
+						},
+						{
+							"key": "fechaFin",
+							"value": "2025-12-31"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

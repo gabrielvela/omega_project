@@ -1,0 +1,229 @@
+{
+	"info": {
+		"_postman_id": "f1b73e65-d4d2-4d9d-8ade-6baeb0b2d082",
+		"name": "omega-cuentas",
+		"description": "Permite consultar los endpoints para cuenta",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "47369765",
+		"_collection_link": "https://supergabicho-482111.postman.co/workspace/Gabriel-Vela-(Gabu)'s-Workspace~e6940171-06b3-4e13-81b9-7e5d01cfaa91/collection/47369765-f1b73e65-d4d2-4d9d-8ade-6baeb0b2d082?action=share&source=collection_link&creator=47369765"
+	},
+	"item": [
+		{
+			"name": "list",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "gabriel",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "gabriel",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/cuentas",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"cuentas"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create_cuenta",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"numeroCuenta\": \"585545\",\r\n    \"tipoCuenta\": \"AHORROS\",\r\n    \"saldoInicial\": 1000.00,\r\n    \"cliente\": {//Utilizar uno de los siguientes ítems\r\n        //\"clienteId\": 1\r\n        //\"identificacion\": \"1701234567\"\r\n        \"nombre\": \"Jose Lema\"        \r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/cuentas/crear",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"cuentas",
+						"crear"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "buscar_cuenta",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/cuentas/buscar?numeroCuenta=585545",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"cuentas",
+						"buscar"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "numeroCuenta",
+							"value": "585545"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "actualizar_cuenta",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"numeroCuenta\": \"585545\",\r\n    \"tipoCuenta\": \"CORRIENTE\",\r\n    //\"saldoInicial\": 1000.00,//Solo se actualiza por movimientos\r\n    //\"saldoDisponible\": 1000.00,//Solo se actualiza por movimientos\r\n    //\"clienteId\": 1, //No actualizable por ser único dueño de la cuenta\r\n    \"estado\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/cuentas/actualizar?id=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"cuentas",
+						"actualizar"
+					],
+					"query": [
+						{
+							"key": "numeroCuenta",
+							"value": "585545",
+							"disabled": true
+						},
+						{
+							"key": "id",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "actualizar-parcial_cuenta",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"estado\": false\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/cuentas/actualizar-parcial?numeroCuenta=585545",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"cuentas",
+						"actualizar-parcial"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "numeroCuenta",
+							"value": "585545"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete_cuenta",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/cuentas/eliminar?id=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"cuentas",
+						"eliminar"
+					],
+					"query": [
+						{
+							"key": "numeroCuenta",
+							"value": "585546",
+							"disabled": true
+						},
+						{
+							"key": "id",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

@@ -1,0 +1,173 @@
+{
+	"info": {
+		"_postman_id": "26e26a4d-2c0a-40e4-b4b2-752b42afc0bf",
+		"name": "omega-movimientos",
+		"description": "Permite consultar los endpoints para movimiento",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "47369765",
+		"_collection_link": "https://supergabicho-482111.postman.co/workspace/Gabriel-Vela-(Gabu)'s-Workspace~e6940171-06b3-4e13-81b9-7e5d01cfaa91/collection/47369765-26e26a4d-2c0a-40e4-b4b2-752b42afc0bf?action=share&source=collection_link&creator=47369765"
+	},
+	"item": [
+		{
+			"name": "list",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "gabriel",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "gabriel",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/movimientos",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"movimientos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "crear_movimiento",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  //\"idCuenta\": \"1\",\r\n  \"numeroCuenta\": \"585545\",//Para crear puede usar el idCuenta o numeroCuenta\r\n  \"tipoMovimiento\": \"DEPOSITO\",//DEPOSITO O RETIRO; LA FECHA SE REGISTRA AUTOMÁTICAMENTE\r\n  \"valor\": 10000//SE VALIDA QUE EL SALDO SEA MAYOR AL VALOR EN EL RETIRO\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/movimientos/crear",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"movimientos",
+						"crear"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "buscar_movimiento",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/movimientos/buscar?id=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"movimientos",
+						"buscar"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "actualizar_movimiento",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "//INABILITADO POR DISCREPANCIA EN ESTA FUNCIÓN\r\n{\r\n  \"tipoMovimiento\": \"RETIRO\",\r\n  \"valor\": -50.00\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/movimientos/actualizar?id=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"movimientos",
+						"actualizar"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "eliminar_movimiento",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/movimientos/eliminar?id=//INABILITADO POR DISCREPANCIA EN ESTA FUNCIÓN",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"movimientos",
+						"eliminar"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "//INABILITADO POR DISCREPANCIA EN ESTA FUNCIÓN"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
